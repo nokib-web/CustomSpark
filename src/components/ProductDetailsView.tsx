@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
     LucideStar,
     LucideHeart,
@@ -12,7 +14,7 @@ import {
     LucideTruck,
     LucideRotateCcw
 } from "lucide-react";
-import { Item } from "@/types/item";
+import { Item } from "@/types";
 import { cn } from "@/lib/utils";
 
 interface ProductDetailsViewProps {
@@ -40,14 +42,17 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                 {/* Left: Image Gallery */}
                 <div className="space-y-6">
                     <div className="relative aspect-square rounded-[2.5rem] overflow-hidden bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none group">
-                        <img
+                        <Image
                             src={item.imageUrl}
                             alt={item.name}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            fill
+                            priority
+                            className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
-                        <div className="absolute top-6 right-6 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="absolute top-6 right-6 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                             <button
                                 onClick={() => setIsWishlisted(!isWishlisted)}
+                                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                                 className={cn(
                                     "h-12 w-12 rounded-2xl backdrop-blur-md flex items-center justify-center shadow-lg transition-all",
                                     isWishlisted ? "bg-red-500 text-white" : "bg-white/90 dark:bg-slate-800/90 text-slate-600 dark:text-slate-300 hover:text-red-500"
@@ -55,7 +60,10 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                             >
                                 <LucideHeart size={24} fill={isWishlisted ? "currentColor" : "none"} />
                             </button>
-                            <button className="h-12 w-12 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-lg hover:text-primary-600 transition-all">
+                            <button
+                                className="h-12 w-12 rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-lg hover:text-primary-600 transition-all"
+                                aria-label="Share product"
+                            >
                                 <LucideShare2 size={24} />
                             </button>
                         </div>
@@ -64,10 +72,15 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                     <div className="grid grid-cols-4 gap-4">
                         {[...Array(4)].map((_, i) => (
                             <div key={i} className={cn(
-                                "aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer hover:opacity-80",
+                                "aspect-square rounded-2xl overflow-hidden border-2 transition-all cursor-pointer hover:opacity-80 relative",
                                 i === 0 ? "border-primary-600" : "border-slate-100 dark:border-slate-800"
                             )}>
-                                <img src={item.imageUrl} alt={`${item.name} thumbnail ${i}`} className="w-full h-full object-cover" />
+                                <Image
+                                    src={item.imageUrl}
+                                    alt={`${item.name} thumbnail ${i}`}
+                                    fill
+                                    className="object-cover"
+                                />
                             </div>
                         ))}
                     </div>
@@ -93,7 +106,7 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                             </span>
                         </div>
                         <div className="text-4xl font-black text-slate-900 dark:text-white">
-                            ${item.price.toFixed(2)}
+                            ${(item.price as number).toFixed(2)}
                         </div>
                     </div>
 
@@ -104,11 +117,19 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                     <div className="space-y-6 pt-8 border-t border-slate-100 dark:border-slate-800 mb-10">
                         <div className="flex flex-col sm:flex-row items-center gap-6">
                             <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 w-full sm:w-auto">
-                                <button onClick={decrementQty} className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                <button
+                                    onClick={decrementQty}
+                                    className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                    aria-label="Decrease quantity"
+                                >
                                     <LucideMinus size={20} />
                                 </button>
-                                <span className="w-12 text-center font-black text-lg">{quantity}</span>
-                                <button onClick={incrementQty} className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors">
+                                <span className="w-12 text-center font-black text-lg" aria-live="polite">{quantity}</span>
+                                <button
+                                    onClick={incrementQty}
+                                    className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                    aria-label="Increase quantity"
+                                >
                                     <LucidePlus size={20} />
                                 </button>
                             </div>
@@ -158,8 +179,10 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                     {activeTab === "description" && (
                         <div className="prose dark:prose-invert max-w-none">
                             <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at ipsum eu nunc commodo posuere et sit amet ligula.
-                                Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed at ipsum eu nunc commodo posuere et sit amet ligula.
+                                {item.shortDescription}
+                            </p>
+                            <p className="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed">
+                                {item.description}
                             </p>
                             <ul className="mt-8 space-y-4">
                                 {["Premium materials and construction", "Designed for maximum durability", "Ergonomic interface for intuitive use", "Industry-leading energy efficiency"].map((feat, i) => (
@@ -178,7 +201,9 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                                 ["Dimensions", "15 x 20 x 5 cm"],
                                 ["Connectivity", "Bluetooth 5.2 / USB-C"],
                                 ["Battery Life", "Up to 48 hours"],
-                                ["Color", "Starry Night / Aurora Silver"]
+                                ["Color", "Starry Night / Aurora Silver"],
+                                ["SKU", item.sku || "N/A"],
+                                ["Stock", item.stock.toString()]
                             ].map(([k, v], i) => (
                                 <div key={i} className="flex justify-between items-center py-4 border-b border-slate-50 dark:border-slate-800/50">
                                     <span className="font-bold text-slate-400 uppercase text-xs tracking-widest">{k}</span>
@@ -202,14 +227,19 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
             <section className="mb-20">
                 <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-8">Related <span className="text-primary-600">Treasures</span></h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {relatedItems.slice(0, 4).map((rel, i) => (
-                        <div key={rel.id} className="group cursor-pointer">
-                            <div className="aspect-square rounded-3xl overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800">
-                                <img src={rel.imageUrl} alt={rel.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    {relatedItems.slice(0, 4).map((rel) => (
+                        <Link href={`/items/${rel.id}`} key={rel.id} className="group cursor-pointer">
+                            <div className="relative aspect-square rounded-3xl overflow-hidden mb-4 bg-slate-100 dark:bg-slate-800 border border-slate-100 dark:border-slate-800">
+                                <Image
+                                    src={rel.imageUrl}
+                                    alt={rel.name}
+                                    fill
+                                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
                             </div>
                             <h4 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary-600 transition-colors line-clamp-1">{rel.name}</h4>
-                            <p className="text-lg font-black text-primary-600">${rel.price.toFixed(2)}</p>
-                        </div>
+                            <p className="text-lg font-black text-primary-600">${(rel.price as number).toFixed(2)}</p>
+                        </Link>
                     ))}
                 </div>
             </section>

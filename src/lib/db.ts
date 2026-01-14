@@ -1,4 +1,4 @@
-import { Item } from "@/types/item";
+import { Item } from "@/types";
 
 // In-memory store for items
 export const items: Item[] = [

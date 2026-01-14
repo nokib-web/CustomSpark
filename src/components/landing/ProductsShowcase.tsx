@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { LucideShoppingBag, LucideArrowRight } from "lucide-react";
-import { Item } from "@/types/item";
+import { Item } from "@/types";
 
 export default function ProductsShowcase() {
     const [products, setProducts] = useState<Item[]>([]);
@@ -51,14 +52,15 @@ export default function ProductsShowcase() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {products.map((product) => (
-                            <div key={product.id} className="group rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
+                            <Link href={`/items/${product.id}`} key={product.id} className="group rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all">
                                 <div className="aspect-[4/3] overflow-hidden relative">
-                                    <img
+                                    <Image
                                         src={product.imageUrl}
                                         alt={product.name}
-                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        fill
+                                        className="object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
-                                    <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary-600">
+                                    <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary-600 z-10">
                                         {product.category}
                                     </div>
                                 </div>
@@ -71,7 +73,7 @@ export default function ProductsShowcase() {
                                         </button>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 )}

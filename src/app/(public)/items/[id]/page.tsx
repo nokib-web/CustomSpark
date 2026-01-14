@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { LucideChevronRight, LucideHome } from "lucide-react";
 import ProductDetailsView from "@/components/ProductDetailsView";
-import { Item } from "@/types/item";
+import { Item } from "@/types";
 
 async function getItem(id: string): Promise<Item | null> {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
@@ -32,8 +32,9 @@ async function getRelatedItems(category: string, currentId: string): Promise<Ite
     }
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-    const item = await getItem(params.id);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const item = await getItem(id);
     if (!item) return { title: "Product Not Found" };
 
     return {
@@ -47,8 +48,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     };
 }
 
-export default async function ItemDetailsPage({ params }: { params: { id: string } }) {
-    const item = await getItem(params.id);
+export default async function ItemDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const item = await getItem(id);
 
     if (!item) {
         notFound();

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Item } from "@/types/item";
+import { Item } from "@/types";
 import ProductCard from "@/components/ProductCard";
 import {
     LucideSearch,

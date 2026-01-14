@@ -20,20 +20,10 @@ import {
     LucideSave
 } from "lucide-react";
 import Link from "next/link";
-import { ItemSchema } from "@/types/item";
+import { ItemSchema, AddItemInput } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 
-interface AddItemFormValues {
-    name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
-    category: string;
-    imageUrl: string;
-    stock: number;
-    sku?: string;
-    tags: string[];
-}
+type AddItemFormValues = AddItemInput;
 
 const CATEGORIES = ["Electronics", "Fashion", "Home", "Sports", "Accessories"];
 

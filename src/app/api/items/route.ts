@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { items } from "@/lib/db";
-import { ItemSchema } from "@/types/item";
+import { ItemSchema } from "@/lib/validations";
 
 /**
  * GET /api/items

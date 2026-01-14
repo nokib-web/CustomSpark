@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { LucideArrowRight, LucideRocket } from "lucide-react";
 
 export default function HeroSection() {
@@ -38,11 +39,13 @@ export default function HeroSection() {
                         </div>
                     </div>
                     <div className="relative animate-in fade-in slide-in-from-right duration-1000">
-                        <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white/10 backdrop-blur-sm">
-                            <img
+                        <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl border-8 border-white/10 backdrop-blur-sm aspect-square">
+                            <Image
                                 src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop"
                                 alt="Premium Product Showcase"
-                                className="aspect-square object-cover"
+                                fill
+                                priority
+                                className="object-cover"
                             />
                         </div>
                         {/* Absolute badge */}

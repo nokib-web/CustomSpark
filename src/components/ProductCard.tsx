@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { LucideHeart, LucideEye, LucideShoppingBag } from "lucide-react";
-import { Item } from "@/types/item";
+import { Item } from "@/types";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -17,21 +18,27 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="group bg-white dark:bg-slate-900 rounded-[2rem] overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-2xl hover:shadow-primary-500/10 transition-all duration-500 flex flex-col h-full relative">
             {/* Image Container */}
             <div className="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-800">
-                <img
+                <Image
                     src={product.imageUrl}
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
 
                 {/* Overlay Actions */}
-                <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                     <Link
                         href={`/items/${product.id}`}
                         className="h-10 w-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-900 dark:text-white shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:bg-primary-600 hover:text-white"
+                        aria-label="View product details"
                     >
                         <LucideEye size={20} />
                     </Link>
-                    <button className="h-10 w-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-900 dark:text-white shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 hover:bg-primary-600 hover:text-white">
+                    <button
+                        className="h-10 w-10 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-900 dark:text-white shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75 hover:bg-primary-600 hover:text-white"
+                        aria-label="Add to cart"
+                    >
                         <LucideShoppingBag size={20} />
                     </button>
                 </div>
@@ -55,6 +62,7 @@ export default function ProductCard({ product }: ProductCardProps) {
                             ? "bg-red-500 text-white"
                             : "bg-white/90 dark:bg-slate-900/90 text-slate-400 hover:text-red-500"
                     )}
+                    aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                 >
                     <LucideHeart size={18} fill={isWishlisted ? "currentColor" : "none"} />
                 </button>

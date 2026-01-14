@@ -34,7 +34,7 @@ export const SignupSchema = z
  * Add Item Form Validation
  * Reusing the core schema but ensuring it matches the form needs
  */
-export const AddItemSchema = z.object({
+export const ItemSchema = z.object({
     name: z.string().min(3, "Name must be at least 3 characters"),
     shortDescription: z
         .string()
@@ -44,10 +44,12 @@ export const AddItemSchema = z.object({
     price: z.number().positive("Price must be a positive number"),
     category: z.string().min(1, "Category is required"),
     imageUrl: z.string().url("Valid image URL is required"),
-    stock: z.number().int().nonnegative().default(0),
+    stock: z.number().int().nonnegative(),
     sku: z.string().optional(),
-    tags: z.array(z.string()).default([]),
+    tags: z.array(z.string()),
 });
+
+export const AddItemSchema = ItemSchema;
 
 /**
  * Contact Form Validation
