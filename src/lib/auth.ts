@@ -23,16 +23,28 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                // This is where you would typically look up the user from your database
-                // For demonstration, we'll return a mock user if credentials are provided
-                if (credentials?.email && credentials?.password) {
-                    return {
-                        id: "1",
-                        name: "Demo User",
-                        email: credentials.email,
-                    };
+                if (!credentials?.email || !credentials?.password) return null;
+
+                try {
+                    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/validate`, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            email: credentials.email,
+                            password: credentials.password,
+                        }),
+                        headers: { "Content-Type": "application/json" },
+                    });
+
+                    const user = await res.json();
+
+                    if (res.ok && user) {
+                        return user;
+                    }
+                    return null;
+                } catch (error) {
+                    console.error("Auth validation error:", error);
+                    return null;
                 }
-                return null;
             },
         }),
     ],
