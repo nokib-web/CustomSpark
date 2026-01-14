@@ -20,13 +20,6 @@ export default function Home() {
       <CTASection />
 
       {/* Scroll to top button or similar could go here */}
-      <footer className="py-12 bg-slate-900 border-t border-slate-800 text-center">
-        <div className="container mx-auto px-6">
-          <p className="text-slate-500 text-sm">
-            &copy; {new Date().getFullYear()} Custom Spark. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </main>
   );
 }
