@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✨ Custom Spark
 
-## Getting Started
+Custom Spark is a modern, high-performance e-commerce platform built with **Next.js 15**. It offers a premium shopping experience with a focus on speed, aesthetics, and user-centric features.
 
-First, run the development server:
+[![Next.js 15](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![NextAuth](https://img.shields.io/badge/NextAuth-4.x-764ABC?style=for-the-badge&logo=next.js)](https://next-auth.js.org/)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Key Features
+
+- **Premium UI/UX**: Stunning landing page with 8 unique sections, glassmorphic effects, and fluid animations.
+- **Robust Authentication**: Secure login via **Google OAuth** and **Credentials** (Email/Password).
+- **Dynamic Catalog**: Full-featured product listing with real-time search, category filtering, and sorting.
+- **Detailed Views**: Dynamic product pages with interactive galleries, tabbed specifications, and related treasures.
+- **Protected Management**: Secure "Add Product" flow with multi-step validation and SKU auto-generation.
+- **User Experience**: Toast notifications, interactive skeletons, and 100% mobile responsiveness.
+- **SEO Optimized**: Dynamic metadata, OpenGraph tags, and JSON-LD structured data for every product.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Authentication**: NextAuth.js
+- **Styling**: Tailwind CSS (v4)
+- **Validation**: Zod + React Hook Form
+- **Icons**: Lucide React
+- **Notifications**: React Hot Toast
+- **Security**: BCrypt.js for password hashing
+
+---
+
+## 📋 Prerequisites
+
+- **Node.js**: v18.17.0 or higher
+- **npm / yarn / pnpm**: Latest version recommended
+
+---
+
+## ⚙️ Installation
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/nokib-web/CustomSpark.git
+   cd customspark
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your_secret_here
+   
+   GOOGLE_CLIENT_ID=your_id_here
+   GOOGLE_CLIENT_SECRET=your_secret_here
+   ```
+
+4. **Run Locally**
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── app/               # Next.js App Router (Pages & API)
+│   ├── (auth)/        # Authentication Pages (Login, Signup)
+│   ├── (public)/      # Public Routes (Landing, Items)
+│   ├── (protected)/   # Routes requiring authentication
+│   └── api/           # Backend API routes
+├── components/        # Reusable UI components
+│   ├── landing/       # Sections for the Home page
+│   └── Navbar.tsx     # Global Navigation
+├── lib/               # Utility functions, constants, and auth config
+├── types/             # TypeScript interfaces and index
+└── middleware.ts      # Authentication logic for protected routes
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔌 API Routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/items` | Fetch all products with filter/limit params |
+| `GET` | `/api/items/[id]` | Fetch a single product by ID |
+| `POST` | `/api/items` | (Protected) Create a new product |
+| `POST` | `/api/auth/register` | Register a new user account |
+| `POST` | `/api/auth/validate`| Validate credentials for login |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🔐 Authentication & Security
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Middleware**: Routes like `/items/add` are protected at the edge via `middleware.ts`.
+- **RBAC**: Base for Role-Based Access Control (Admin/User) is defined in the type system.
+- **Encryption**: Passwords are hashed using BCrypt before validation.
+- **Session Strategy**: Uses JWT (JSON Web Tokens) for lightweight, secure authentication persistent across requests.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🔮 Future Enhancements
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [ ] **Database Integration**: Connect to MongoDB/PostgreSQL for persistent storage.
+- [ ] **Shopping Cart**: Full Redux/Zustand state-managed cart and checkout.
+- [ ] **Admin Dashboard**: Comprehensive stats and inventory management dashboard.
+- [ ] **Stripe Payment**: Secure checkout flow integration.
+- [ ] **Image Upload**: Switch from URLs to direct image uploads via Cloudinary.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+Built with ⚡ by **Custom Spark Team**.
