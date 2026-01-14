@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { toast } from "react-hot-toast";
+import { showSuccess, showError } from "@/lib/toast";
 import {
     LucideSparkles,
     LucideMail,
@@ -86,13 +86,13 @@ export default function SignupPage() {
             const result = await res.json();
 
             if (res.ok) {
-                toast.success("Account created! Redirecting to login...");
+                showSuccess("Account created! Redirecting to login...");
                 setTimeout(() => router.push("/login"), 2000);
             } else {
-                toast.error(result.error || "Registration failed");
+                showError(result.error || "Registration failed");
             }
         } catch (error) {
-            toast.error("Something went wrong");
+            showError("Something went wrong");
         } finally {
             setIsLoading(false);
         }
@@ -103,7 +103,7 @@ export default function SignupPage() {
         try {
             await signIn("google", { callbackUrl: "/items" });
         } catch (error) {
-            toast.error("Failed to sign in with Google.");
+            showError("Failed to sign in with Google.");
             setIsGoogleLoading(false);
         }
     };

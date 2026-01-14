@@ -7,7 +7,7 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { toast } from "react-hot-toast";
+import { showSuccess, showError } from "@/lib/toast";
 import {
     LucideSparkles,
     LucideMail,
@@ -61,14 +61,14 @@ export default function LoginPage() {
             });
 
             if (result?.error) {
-                toast.error("Invalid email or password. Please try again.");
+                showError("Invalid email or password. Please try again.");
             } else {
-                toast.success("Welcome back! Redirecting...");
+                showSuccess("Welcome back! Redirecting...");
                 router.push(callbackUrl);
                 router.refresh();
             }
         } catch (error) {
-            toast.error("Something went wrong. Please try again later.");
+            showError("Something went wrong. Please try again later.");
         } finally {
             setIsLoading(false);
         }
@@ -79,7 +79,7 @@ export default function LoginPage() {
         try {
             await signIn("google", { callbackUrl });
         } catch (error) {
-            toast.error("Failed to sign in with Google.");
+            showError("Failed to sign in with Google.");
             setIsGoogleLoading(false);
         }
     };

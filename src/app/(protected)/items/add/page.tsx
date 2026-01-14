@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { toast } from "react-hot-toast";
+import { showSuccess, showError } from "@/lib/toast";
 import {
     LucidePackage,
     LucideTag,
@@ -72,14 +72,14 @@ export default function AddItemPage() {
             const result = await res.json();
 
             if (res.ok) {
-                toast.success("Product added successfully!");
+                showSuccess("Product added successfully!");
                 router.push(`/items/${result.id}`);
                 router.refresh();
             } else {
-                toast.error(result.error || "Failed to add product");
+                showError(result.error || "Failed to add product");
             }
         } catch (error) {
-            toast.error("Something went wrong");
+            showError("Something went wrong");
         } finally {
             setIsLoading(false);
         }
