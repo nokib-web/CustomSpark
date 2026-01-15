@@ -52,6 +52,14 @@ export const ItemSchema = z.object({
 export const AddItemSchema = ItemSchema;
 
 /**
+ * Profile Update Validation
+ */
+export const ProfileUpdateSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters").optional(),
+    image: z.string().url("Valid image URL is required").optional().or(z.literal("")),
+});
+
+/**
  * Contact Form Validation
  */
 export const ContactSchema = z.object({
@@ -63,4 +71,5 @@ export const ContactSchema = z.object({
 export type LoginInput = z.infer<typeof LoginSchema>;
 export type SignupInput = z.infer<typeof SignupSchema>;
 export type AddItemInput = z.infer<typeof AddItemSchema>;
+export type ProfileUpdateInput = z.infer<typeof ProfileUpdateSchema>;
 export type ContactInput = z.infer<typeof ContactSchema>;
