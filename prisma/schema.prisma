@@ -16,6 +16,7 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
+  role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
   items         Item[]
@@ -23,6 +24,11 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Account {
