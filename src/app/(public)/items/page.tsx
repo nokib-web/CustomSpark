@@ -34,46 +34,32 @@ export default function ItemsPage() {
         const fetchItems = async () => {
             setIsLoading(true);
             try {
-                const res = await fetch("/api/items");
+                // Building the query string for server-side filtering
+                const params = new URLSearchParams();
+                if (activeCategory !== "All") params.append("category", activeCategory);
+                if (searchQuery) params.append("search", searchQuery);
+                params.append("sort", sortBy);
+                params.append("limit", "100"); // Fetch more for client-side display count logic
+
+                const res = await fetch(`/api/items?${params.toString()}`);
                 const data = await res.json();
-                setItems(data);
+
+                // Handle the new paginated structure { items: [], pagination: {} }
+                setItems(Array.isArray(data.items) ? data.items : []);
             } catch (error) {
                 console.error("Error fetching items:", error);
+                setItems([]);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchItems();
-    }, []);
+    }, [activeCategory, searchQuery, sortBy]);
 
+    // Since we are now filtering on the server, we just need to handle the display
     const filteredAndSortedItems = useMemo(() => {
-        let result = [...items];
-
-        // Search
-        if (searchQuery) {
-            result = result.filter(item =>
-                item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                item.description.toLowerCase().includes(searchQuery.toLowerCase())
-            );
-        }
-
-        // Category
-        if (activeCategory !== "All") {
-            result = result.filter(item =>
-                item.category.toLowerCase() === activeCategory.toLowerCase()
-            );
-        }
-
-        // Sort
-        result.sort((a, b) => {
-            if (sortBy === "price-asc") return a.price - b.price;
-            if (sortBy === "price-desc") return b.price - a.price;
-            if (sortBy === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            return 0; // "popular" or default
-        });
-
-        return result;
-    }, [items, searchQuery, activeCategory, sortBy]);
+        return items;
+    }, [items]);
 
     const displayedItems = filteredAndSortedItems.slice(0, displayCount);
     const hasMore = filteredAndSortedItems.length > displayCount;

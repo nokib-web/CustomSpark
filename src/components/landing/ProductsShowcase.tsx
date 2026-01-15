@@ -15,9 +15,11 @@ export default function ProductsShowcase() {
             try {
                 const res = await fetch("/api/items?limit=6");
                 const data = await res.json();
-                setProducts(data);
+                // Handle the new paginated structure
+                setProducts(Array.isArray(data.items) ? data.items : []);
             } catch (error) {
                 console.error("Failed to fetch products:", error);
+                setProducts([]);
             } finally {
                 setLoading(false);
             }
