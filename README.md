@@ -33,9 +33,14 @@ Custom Spark is a modern, high-performance e-commerce platform built with **Next
 
 ---
 
+- **Database Integration**: Powered by **Prisma ORM** and **PostgreSQL**.
+
+---
+
 ## 📋 Prerequisites
 
 - **Node.js**: v18.17.0 or higher
+- **PostgreSQL**: v14.0 or higher
 - **npm / yarn / pnpm**: Latest version recommended
 
 ---
@@ -54,19 +59,46 @@ Custom Spark is a modern, high-performance e-commerce platform built with **Next
    ```
 
 3. **Configure Environment Variables**
-   Create a `.env.local` file in the root directory:
+   Create a `.env.local` file in the root directory and add:
    ```env
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your_secret_here
-   
-   GOOGLE_CLIENT_ID=your_id_here
-   GOOGLE_CLIENT_SECRET=your_secret_here
+   # Database
+   DATABASE_URL="postgresql://username:password@localhost:5432/ecommerce_db?schema=public"
+
+   # NextAuth
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your_secret_here"
+
+   # Google OAuth
+   GOOGLE_CLIENT_ID="your_id_here"
+   GOOGLE_CLIENT_SECRET="your_secret_here"
    ```
 
-4. **Run Locally**
+4. **Initialize Database**
+   ```bash
+   # Generate Prisma Client
+   npm run db:generate
+
+   # Run Migrations
+   npm run db:migrate
+
+   # Seed initial data
+   npm run db:seed
+   ```
+
+5. **Run Locally**
    ```bash
    npm run dev
    ```
+
+---
+
+## 🏗 Database Management
+
+Manage your data efficiently with the following commands:
+
+- `npm run db:studio`: Open interactive database UI.
+- `npm run db:push`: Force-sync schema with DB (useful for local dev).
+- `npm run db:reset`: Wipe and reset the entire database.
 
 ---
 

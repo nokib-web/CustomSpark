@@ -1,21 +1,53 @@
 # 🛠 Custom Spark Setup Guide
 
-This guide provides detailed instructions on how to configure the environment variables and external services required to run Custom Spark.
+This guide provides detailed instructions on how to configure your local environment, including PostgreSQL and NextAuth.
 
 ---
 
-## 🔐 1. NextAuth Secret
+## � 1. PostgreSQL Database Setup
 
-The `NEXTAUTH_SECRET` is used to encrypt JWT tokens and sign cookies. It should be a long, random string.
+Custom Spark requires a PostgreSQL database to store users and products.
+
+### Installing PostgreSQL locally:
+1.  **Download**: Get the installer from [postgresql.org](https://www.postgresql.org/download/).
+2.  **Install**: Follow the wizard. During installation:
+    *   Set a password for the `postgres` user (keep this!).
+    *   Default port is usually `5432`.
+3.  **Create Database**: Open **pgAdmin** or use the terminal (`psql`):
+    ```sql
+    CREATE DATABASE ecommerce_db;
+    ```
+
+### Setting up the Connection String:
+Update your `.env.local` file with your credentials:
+```env
+DATABASE_URL="postgresql://YOUR_USERNAME:YOUR_PASSWORD@localhost:5432/ecommerce_db?schema=public"
+```
+
+### Initializing the Database:
+Run these commands in order:
+```bash
+# 1. Generate the Prisma Client
+npm run db:generate
+
+# 2. Setup tables and migrations
+npm run db:migrate
+
+# 3. Populate with sample items and users
+npm run db:seed
+```
+
+---
+
+## 🔐 2. NextAuth Secret
+
+The `NEXTAUTH_SECRET` is used to encrypt JWT tokens.
 
 ### How to generate:
-You can generate a secure secret using any of the following methods:
-
 - **Terminal (OpenSSL)**:
   ```bash
   openssl rand -base64 32
   ```
-- **Online Generator**: Use a secure tool like [PasswordGenerator.net](https://www.passwordgenerator.net/) (set to 32+ characters).
 - **Node.js**:
   ```bash
   node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
@@ -23,47 +55,37 @@ You can generate a secure secret using any of the following methods:
 
 ---
 
-## 🌐 2. Google OAuth Credentials
+## 🌐 3. Google OAuth Credentials
 
-To enable Google Sign-In, you need to register an application in the Google Cloud Console.
-
-### Step-by-Step:
+To enable Google Sign-In:
 1.  Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2.  **Create a New Project**: Click the project dropdown and select "New Project". Give it a name like `CustomSpark`.
-3.  **Configure OAuth Consent Screen**:
-    *   Navigate to **APIs & Services > OAuth consent screen**.
-    *   Select **External** and fill in the required app information (App name, support email, developer contact).
-4.  **Create Credentials**:
-    *   Go to **APIs & Services > Credentials**.
-    *   Click **+ Create Credentials** and select **OAuth client ID**.
-    *   Select **Web application** as the Application type.
-    *   **Authorized JavaScript origins**: Add `http://localhost:3000`.
-    *   **Authorized redirect URIs**: Add `http://localhost:3000/api/auth/callback/google`.
-    *   Click **Create**.
-5.  **Copy IDs**: You will see your **Client ID** and **Client Secret**. Paste these into your `.env` file.
+2.  **Create a New Project**.
+3.  **Configure OAuth Consent Screen**: Select **External**.
+4.  **Create Credentials**: Select **OAuth client ID** > **Web application**.
+    *   **Authorized JavaScript origins**: `http://localhost:3000`
+    *   **Authorized redirect URIs**: `http://localhost:3000/api/auth/callback/google`
+5.  Copy your **Client ID** and **Client Secret** to `.env.local`.
 
 ---
 
-## 🚀 3. Common Setup Issues
+## � 4. Database Management & Troubleshooting
 
-### "Invalid Callback URL"
-**Symptoms**: After clicking Google Login, you see an error page from Google.
-**Solution**: Ensure your **Authorized redirect URIs** in Google Cloud Console exactly matches `http://localhost:3000/api/auth/callback/google`. Any typo will cause a mismatch error.
+### Useful Commands:
+- `npm run db:studio`: Opens a browser-based GUI to view your data.
+- `npm run db:reset`: Wipes the database and re-runs migrations and seeds.
 
-### "NextAuth Secret Missing"
-**Symptoms**: Authentication fails immediately or the server logs show a warning about a missing secret.
-**Solution**: Ensure `NEXTAUTH_SECRET` is defined in your `.env` file (not `.env.example`). Remember to restart your server after changing environment variables.
-
-### "Google OAuth 403: access_denied"
-**Symptoms**: You can see the login screen but cannot log in with certain accounts.
-**Solution**: If your OAuth Consent Screen is in "Testing" mode, you must explicitly add user email addresses under "Test users" in the Google Cloud Console.
+### Common Issues:
+- **"Table not found"**: Ensure you've run `npm run db:migrate` and `npm run db:generate`.
+- **Connection Refused**: Check if PostgreSQL service is running and the port/password in `DATABASE_URL` is correct.
+- **P1012 Validation Error**: Since we use **Prisma 7**, ensure you are not using `url = env("DATABASE_URL")` inside the `datasource` block in `schema.prisma`. It is handled via the config/adapter now.
 
 ---
 
-## 🏁 4. Final Checklist
-- [ ] `.env` file created (copy of `.env.example`).
-- [ ] `NEXTAUTH_URL` matches your local/production URL.
+## 🏁 5. Final Checklist
+- [ ] `.env.local` file created.
+- [ ] `DATABASE_URL` is correct and PostgreSQL is running.
+- [ ] `npm run db:migrate` has been executed.
+- [ ] `NEXTAUTH_URL` and `NEXTAUTH_SECRET` are set.
 - [ ] Google Client ID and Secret are correct.
-- [ ] Server restarted after setup.
 
 Happy Coding! ⚡
