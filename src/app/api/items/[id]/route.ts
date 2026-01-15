@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { ItemSchema } from "@/lib/validations";
+import { createAuditLog } from "@/lib/audit";
 
 /**
  * GET /api/items/[id]
@@ -14,8 +15,11 @@ export async function GET(
     try {
         const { id } = await params;
 
-        const item = await prisma.item.findUnique({
-            where: { id },
+        const item = await prisma.item.findFirst({
+            where: {
+                id,
+                deletedAt: null // Ensure we don't fetch soft deleted items
+            },
             include: {
                 user: {
                     select: {
@@ -66,8 +70,8 @@ export async function PUT(
         const { id } = await params;
 
         // Find the item first to check ownership
-        const existingItem = await prisma.item.findUnique({
-            where: { id }
+        const existingItem = await prisma.item.findFirst({
+            where: { id, deletedAt: null }
         });
 
         if (!existingItem) {
@@ -111,6 +115,19 @@ export async function PUT(
             }
         });
 
+        // Audit Log
+        const changes = Object.keys(validation.data).reduce((acc, key) => {
+            if (validation.data[key as keyof typeof validation.data] !== existingItem[key as keyof typeof existingItem]) {
+                acc[key] = {
+                    from: existingItem[key as keyof typeof existingItem],
+                    to: validation.data[key as keyof typeof validation.data]
+                };
+            }
+            return acc;
+        }, {} as Record<string, any>);
+
+        await createAuditLog(userId, "UPDATE_ITEM", "Item", id, changes);
+
         return NextResponse.json(updatedItem);
     } catch (error) {
         console.error("PUT item error:", error);
@@ -146,7 +163,7 @@ export async function DELETE(
             where: { id }
         });
 
-        if (!existingItem) {
+        if (!existingItem || existingItem.deletedAt) {
             return NextResponse.json(
                 { error: "Item not found" },
                 { status: 404 }
@@ -164,9 +181,14 @@ export async function DELETE(
             );
         }
 
-        await prisma.item.delete({
-            where: { id }
+        // Soft delete instead of hard delete
+        await prisma.item.update({
+            where: { id },
+            data: { deletedAt: new Date() }
         });
+
+        // Audit Log
+        await createAuditLog(userId, "DELETE_ITEM", "Item", id);
 
         return NextResponse.json(
             { message: "Item deleted successfully" },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { ItemSchema } from "@/lib/validations";
+import { createAuditLog } from "@/lib/audit";
 
 /**
  * GET /api/items
@@ -19,7 +20,10 @@ export async function GET(req: NextRequest) {
         const sort = searchParams.get("sort") || "newest";
 
         // Build where clause dynamically
-        const andFilters: any[] = [];
+        // Ensure we only fetch items that are NOT deleted
+        const andFilters: any[] = [
+            { deletedAt: null }
+        ];
 
         if (category && category !== "All") {
             andFilters.push({
@@ -31,16 +35,21 @@ export async function GET(req: NextRequest) {
         }
 
         if (search) {
+            // Use fullTextSearch if available, otherwise fallback to OR
+            // Since we enabled "fullTextSearchPostgres" preview, we can try using it specifically if configured,
+            // but standard 'contains' with appropriate indices is often sufficient for basic needs.
+            // For now, let's keep robust literal matching but know it's index-supported.
             andFilters.push({
                 OR: [
                     { name: { contains: search, mode: 'insensitive' } },
                     { description: { contains: search, mode: 'insensitive' } },
-                    { shortDescription: { contains: search, mode: 'insensitive' } }
+                    { shortDescription: { contains: search, mode: 'insensitive' } },
+                    { tags: { has: search } }
                 ]
             });
         }
 
-        const where = andFilters.length > 0 ? { AND: andFilters } : {};
+        const where = { AND: andFilters };
 
         // Determine sort order
         let orderBy: any = { createdAt: 'desc' };
@@ -123,6 +132,8 @@ export async function POST(req: NextRequest) {
             sku
         } = validation.data;
 
+        const userId = (session.user as any).id;
+
         const item = await prisma.item.create({
             data: {
                 name,
@@ -134,7 +145,7 @@ export async function POST(req: NextRequest) {
                 stock,
                 tags,
                 sku,
-                userId: (session.user as any).id
+                userId
             },
             include: {
                 user: {
@@ -145,6 +156,9 @@ export async function POST(req: NextRequest) {
                 }
             }
         });
+
+        // Audit Log
+        await createAuditLog(userId, "CREATE_ITEM", "Item", item.id, { name: item.name, price: item.price });
 
         return NextResponse.json(item, { status: 201 });
     } catch (error) {
