@@ -2,6 +2,8 @@ import { NextAuthOptions, getServerSession as getNextAuthSession } from "next-au
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { redirect } from "next/navigation";
+import bcrypt from "bcryptjs";
+import { users } from "@/lib/db";
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -26,21 +28,26 @@ export const authOptions: NextAuthOptions = {
                 if (!credentials?.email || !credentials?.password) return null;
 
                 try {
-                    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/validate`, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            email: credentials.email,
-                            password: credentials.password,
-                        }),
-                        headers: { "Content-Type": "application/json" },
-                    });
+                    // Direct database access is more reliable in Dev mode than internal fetch
+                    const user = users.find(u => u.email.toLowerCase() === credentials.email.toLowerCase());
 
-                    const user = await res.json();
-
-                    if (res.ok && user) {
-                        return user;
+                    if (!user) {
+                        return null;
                     }
-                    return null;
+
+                    const passwordMatch = await bcrypt.compare(credentials.password, user.passwordHash);
+
+                    if (!passwordMatch) {
+                        return null;
+                    }
+
+                    // Return user object without sensitive data
+                    return {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        role: user.role,
+                    };
                 } catch (error) {
                     console.error("Auth validation error:", error);
                     return null;
@@ -49,9 +56,17 @@ export const authOptions: NextAuthOptions = {
         }),
     ],
     callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.id = user.id;
+                token.role = (user as any).role;
+            }
+            return token;
+        },
         async session({ session, token }) {
             if (token && session.user) {
-                (session.user as any).id = token.sub;
+                (session.user as any).id = token.id;
+                (session.user as any).role = token.role;
             }
             return session;
         },

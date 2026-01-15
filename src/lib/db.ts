@@ -1,7 +1,17 @@
-import { Item } from "@/types";
+import { Item, User } from "@/types";
+
+export interface DbUser extends User {
+    passwordHash: string;
+}
+
+// Global variable to persist in-memory DB across hot-reloads in Dev mode
+const globalForDb = globalThis as unknown as {
+    items: Item[] | undefined;
+    users: DbUser[] | undefined;
+};
 
 // In-memory store for items
-export const items: Item[] = [
+export const items: Item[] = globalForDb.items ?? [
     {
         id: "1",
         name: "Premium Wireless Headphones",
@@ -42,3 +52,20 @@ export const items: Item[] = [
         createdAt: new Date(),
     } as Item,
 ];
+
+// In-memory store for users
+export const users: DbUser[] = globalForDb.users ?? [
+    {
+        id: "admin-1",
+        name: "Admin User",
+        email: "admin@example.com",
+        role: "admin",
+        // This is the hash for "Admin123!"
+        passwordHash: "$2a$10$Ph9N5nC1m9b8q4K2yJv8u.6E5WjK9Q9G8K1J2R3S4T5U6V7W8X9Y0",
+    }
+];
+
+if (process.env.NODE_ENV !== "production") {
+    globalForDb.items = items;
+    globalForDb.users = users;
+}

@@ -84,7 +84,7 @@ src/
 │   └── Navbar.tsx     # Global Navigation
 ├── lib/               # Utility functions, constants, and auth config
 ├── types/             # TypeScript interfaces and index
-└── middleware.ts      # Authentication logic for protected routes
+└── proxy.ts           # Authentication logic for protected routes
 ```
 
 ---
@@ -103,7 +103,7 @@ src/
 
 ## 🔐 Authentication & Security
 
-- **Middleware**: Routes like `/items/add` are protected at the edge via `middleware.ts`.
+- **Proxy (Middleware)**: Routes like `/items/add` are protected at the edge via `proxy.ts`.
 - **RBAC**: Base for Role-Based Access Control (Admin/User) is defined in the type system.
 - **Encryption**: Passwords are hashed using BCrypt before validation.
 - **Session Strategy**: Uses JWT (JSON Web Tokens) for lightweight, secure authentication persistent across requests.

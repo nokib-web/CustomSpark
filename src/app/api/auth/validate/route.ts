@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { users } from "@/lib/db";
 
 const LoginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(1),
 });
-
-// Demo credentials
-// Admin123! hashed
-const DEMO_USER = {
-    id: "admin-1",
-    email: "admin@example.com",
-    name: "Admin User",
-    // This is the hash for "Admin123!"
-    passwordHash: "$2a$10$Ph9N5nC1m9b8q4K2yJv8u.6E5WjK9Q9G8K1J2R3S4T5U6V7W8X9Y0",
-};
 
 export async function POST(req: NextRequest) {
     try {
@@ -32,15 +23,18 @@ export async function POST(req: NextRequest) {
 
         const { email, password } = validation.data;
 
-        // 2. Check credentials
-        if (email !== DEMO_USER.email) {
+        // 2. Find user in persistent store
+        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+        if (!user) {
             return NextResponse.json(
                 { error: "Invalid credentials" },
                 { status: 401 }
             );
         }
 
-        const passwordMatch = await bcrypt.compare(password, DEMO_USER.passwordHash);
+        // 3. Compare passwords
+        const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
         if (!passwordMatch) {
             return NextResponse.json(
@@ -49,14 +43,15 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 3. Return user object on success
+        // 4. Return user object on success
         const responseBody = {
-            id: DEMO_USER.id,
-            email: DEMO_USER.email,
-            name: DEMO_USER.name,
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
         };
 
-        // 4. Include rate limiting headers (Mocked)
+        // 5. Include rate limiting headers (Mocked)
         const headers = new Headers();
         headers.set("X-RateLimit-Limit", "5");
         headers.set("X-RateLimit-Remaining", "4");

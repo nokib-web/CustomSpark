@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { users } from "@/lib/db";
 
 const RegisterSchema = z.object({
     name: z.string().min(2),
@@ -23,18 +24,36 @@ export async function POST(req: NextRequest) {
 
         const { name, email, password } = validation.data;
 
-        // 2. In a real app, check if user exists in DB
-        // For demo, we'll just mock success
-        console.log(`Registering user: ${name} (${email})`);
+        // 2. Check if user already exists
+        const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (existingUser) {
+            return NextResponse.json(
+                { error: "A user with this email already exists" },
+                { status: 400 }
+            );
+        }
 
         // 3. Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // 4. Return success (simulating DB save)
+        // 4. Create new user
+        const newUser = {
+            id: Math.random().toString(36).substring(2, 9),
+            name,
+            email,
+            role: "user" as const,
+            passwordHash: hashedPassword,
+        };
+
+        // 5. Save to in-memory DB
+        users.push(newUser);
+
+        console.log(`User registered successfully: ${name} (${email})`);
+
         return NextResponse.json(
             {
                 message: "Account created successfully",
-                user: { name, email }
+                user: { name, email, id: newUser.id }
             },
             { status: 201 }
         );
