@@ -1,17 +1,19 @@
 import { NextAuthOptions, getServerSession as getNextAuthSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
-import { users } from "@/lib/db";
+import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
+    adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
     },
     pages: {
         signIn: "/login",
-        error: "/auth/error",
+        error: "/login",
     },
     providers: [
         GoogleProvider({
@@ -28,25 +30,27 @@ export const authOptions: NextAuthOptions = {
                 if (!credentials?.email || !credentials?.password) return null;
 
                 try {
-                    // Direct database access is more reliable in Dev mode than internal fetch
-                    const user = users.find(u => u.email.toLowerCase() === credentials.email.toLowerCase());
+                    const user = await prisma.user.findUnique({
+                        where: {
+                            email: credentials.email.toLowerCase(),
+                        },
+                    });
 
-                    if (!user) {
+                    if (!user || !user.password) {
                         return null;
                     }
 
-                    const passwordMatch = await bcrypt.compare(credentials.password, user.passwordHash);
+                    const passwordMatch = await bcrypt.compare(credentials.password, user.password);
 
                     if (!passwordMatch) {
                         return null;
                     }
 
-                    // Return user object without sensitive data
                     return {
                         id: user.id,
                         email: user.email,
                         name: user.name,
-                        role: user.role,
+                        image: user.image,
                     };
                 } catch (error) {
                     console.error("Auth validation error:", error);
@@ -59,14 +63,12 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
-                token.role = (user as any).role;
             }
             return token;
         },
         async session({ session, token }) {
             if (token && session.user) {
                 (session.user as any).id = token.id;
-                (session.user as any).role = token.role;
             }
             return session;
         },
