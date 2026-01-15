@@ -12,35 +12,40 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
 
         // Parse segments
-        const page = parseInt(searchParams.get("page") || "1");
-        const limit = parseInt(searchParams.get("limit") || "10");
+        const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
+        const limit = Math.max(1, parseInt(searchParams.get("limit") || "10"));
         const category = searchParams.get("category");
         const search = searchParams.get("search");
         const sort = searchParams.get("sort") || "newest";
 
-        // Build where clause
-        const where: any = {
-            AND: [
-                category ? {
-                    category: {
-                        equals: category,
-                        mode: 'insensitive'
-                    }
-                } : {},
-                search ? {
-                    OR: [
-                        { name: { contains: search, mode: 'insensitive' } },
-                        { description: { contains: search, mode: 'insensitive' } },
-                        { shortDescription: { contains: search, mode: 'insensitive' } }
-                    ]
-                } : {}
-            ]
-        };
+        // Build where clause dynamically
+        const andFilters: any[] = [];
+
+        if (category && category !== "All") {
+            andFilters.push({
+                category: {
+                    equals: category,
+                    mode: 'insensitive'
+                }
+            });
+        }
+
+        if (search) {
+            andFilters.push({
+                OR: [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { description: { contains: search, mode: 'insensitive' } },
+                    { shortDescription: { contains: search, mode: 'insensitive' } }
+                ]
+            });
+        }
+
+        const where = andFilters.length > 0 ? { AND: andFilters } : {};
 
         // Determine sort order
         let orderBy: any = { createdAt: 'desc' };
-        if (sort === "price-low") orderBy = { price: 'asc' };
-        if (sort === "price-high") orderBy = { price: 'desc' };
+        if (sort === "price-low" || sort === "price-asc") orderBy = { price: 'asc' };
+        if (sort === "price-high" || sort === "price-desc") orderBy = { price: 'desc' };
         if (sort === "oldest") orderBy = { createdAt: 'asc' };
 
         // Fetch items and total count in parallel
