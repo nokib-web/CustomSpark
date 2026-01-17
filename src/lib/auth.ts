@@ -6,8 +6,16 @@ import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 
+const getPrismaAdapter = () => {
+    try {
+        return PrismaAdapter(prisma) as any;
+    } catch {
+        return undefined;
+    }
+};
+
 export const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma as any),
+    adapter: getPrismaAdapter(),
     session: {
         strategy: "jwt",
     },
