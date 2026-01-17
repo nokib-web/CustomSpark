@@ -3,16 +3,14 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const prismaClientSingleton = () => {
-    // Attempt to find any valid connection string from common Vercel/Postgres env vars
     const connectionString =
         process.env.DATABASE_URL ||
         process.env.POSTGRES_PRISMA_URL ||
         process.env.POSTGRES_URL;
 
     if (!connectionString) {
-        console.warn("⚠️ No valid database connection string found (checked DATABASE_URL, POSTGRES_PRISMA_URL, POSTGRES_URL). Prisma might fail at runtime.");
-        // Return dummy client to allow build generation to pass if env vars missing
-        return new PrismaClient() as any;
+        console.warn("⚠️ No valid database connection string found. Database operations will fail.");
+        return null;
     }
 
     const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
@@ -20,14 +18,11 @@ const prismaClientSingleton = () => {
 
     let adapter;
     try {
-        // We use the adapter to allow for more robust connection pooling using 'pg'
-        // This is the standard way for Prisma 7 with Postgres when not using Accelerate
         const pool = new Pool({ connectionString });
         adapter = new PrismaPg(pool);
     } catch (err) {
-        console.warn("⚠️ Failed to initialize Prisma Adapter (PG). This might happen during build if URL is invalid/dummy. Falling back to standard client logic where possible.", err);
-        // If pool creation fails (e.g. invalid URL), we return a dummy client or cast to any to suppress build errors
-        return new PrismaClient() as any;
+        console.warn("⚠️ Failed to initialize Prisma Adapter (PG).", err);
+        return null;
     }
 
     const client = new PrismaClient({
@@ -44,7 +39,7 @@ const prismaClientSingleton = () => {
                     const end = performance.now();
                     const duration = end - start;
 
-                    if (duration > 500) { // Log queries slower than 500ms
+                    if (duration > 500) {
                         console.warn(`⚠️ Slow Query [${model}.${operation}] took ${duration.toFixed(2)}ms`);
                     }
 
@@ -61,7 +56,7 @@ const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClientSingleton | undefined;
 };
 
-const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
+const prisma = (globalForPrisma.prisma ?? prismaClientSingleton()) as any;
 
 export default prisma;
 
