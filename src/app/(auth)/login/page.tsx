@@ -67,7 +67,7 @@ export default function LoginPage() {
                 router.push(callbackUrl);
                 router.refresh();
             }
-        } catch (error) {
+        } catch {
             showError("Something went wrong. Please try again later.");
         } finally {
             setIsLoading(false);
@@ -78,17 +78,17 @@ export default function LoginPage() {
         setIsGoogleLoading(true);
         try {
             await signIn("google", { callbackUrl });
-        } catch (error) {
+        } catch {
             showError("Failed to sign in with Google.");
             setIsGoogleLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-primary-950/20 p-6">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-primary-50 via-white to-indigo-50 dark:from-slate-950 dark:via-slate-900 dark:to-primary-950/20 p-6">
             {/* Animated blob background elements */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-primary-500/5 blur-[120px] rounded-full animate-pulse" />
-            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-125 h-125 bg-primary-500/5 blur-[120px] rounded-full animate-pulse" />
+            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-125 h-125 bg-indigo-500/5 blur-[120px] rounded-full animate-pulse" />
 
             <div className="w-full max-w-md animate-in fade-in zoom-in duration-700 ease-out relative z-10">
                 <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[2.5rem] shadow-2xl border border-white dark:border-slate-800 p-8 md:p-10 hover:shadow-primary-500/10 transition-shadow duration-500 animate-float">
@@ -100,7 +100,7 @@ export default function LoginPage() {
                                 <LucideSparkles size={28} />
                             </div>
                         </Link>
-                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-primary-600 to-indigo-600 dark:from-white dark:via-primary-400 dark:to-indigo-400">
+                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-900 via-primary-600 to-indigo-600 dark:from-white dark:via-primary-400 dark:to-indigo-400">
                             Welcome Back
                         </h1>
                         <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
@@ -232,7 +232,7 @@ export default function LoginPage() {
 
                     {/* Footer Link */}
                     <p className="text-center mt-10 text-sm font-bold text-slate-500 dark:text-slate-400">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/signup" className="text-primary-600 hover:text-primary-500 transition-colors underline-offset-4 hover:underline">
                             Sign up
                         </Link>
