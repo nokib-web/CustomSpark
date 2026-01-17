@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import {
-    LucideSparkles,
     LucideMenu,
     LucideX,
     LucideUser,
@@ -72,8 +72,13 @@ export default function Navbar() {
                 <div className="flex items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center gap-2 group">
-                        <div className="relative">
-                            <LucideSparkles className="h-8 w-8 text-primary-600 animate-pulse" />
+                        <div className="relative h-10 w-10 flex-shrink-0">
+                            <Image
+                                src="/favicon.png"
+                                alt="Custom Spark Logo"
+                                fill
+                                className="object-contain group-hover:scale-110 transition-transform duration-300"
+                            />
                             <div className="absolute inset-0 bg-primary-400/20 blur-xl rounded-full scale-150 group-hover:scale-200 transition-transform" />
                         </div>
                         <span className="text-2xl font-black tracking-tighter text-gradient">

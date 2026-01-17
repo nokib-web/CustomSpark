@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Custom Spark",
-  description: "Built with Next.js 15",
+  title: "Custom Spark | Premium E-Commerce Platform",
+  description: "Experience modern, custom-built e-commerce excellence with Custom Spark. High-end features, seamless performance.",
 };
 
 export default function RootLayout({

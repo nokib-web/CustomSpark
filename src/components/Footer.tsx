@@ -1,6 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
-    LucideSparkles,
     LucideTwitter,
     LucideInstagram,
     LucideFacebook,
@@ -30,7 +30,14 @@ export default function Footer() {
                     {/* Column 1: Brand */}
                     <div className="space-y-6">
                         <Link href="/" className="flex items-center gap-2 font-bold text-2xl text-white">
-                            <LucideSparkles className="h-7 w-7 text-primary-500" />
+                            <div className="relative h-8 w-8">
+                                <Image
+                                    src="/favicon.png"
+                                    alt="Custom Spark Logo"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
                             <span>Custom Spark</span>
                         </Link>
                         <p className="text-slate-400 text-sm leading-relaxed">
