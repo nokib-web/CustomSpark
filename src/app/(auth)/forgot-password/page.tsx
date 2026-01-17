@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
                         </div>
                     </Link>
                     <h1 className="text-3xl font-bold">Reset Password</h1>
-                    <p className="text-slate-500 mt-2 italic">No worries, we've got you covered.</p>
+                    <p className="text-slate-500 mt-2 italic">No worries, we&apos;ve got you covered.</p>
                 </div>
 
                 {!submitted ? (
@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
                     <div className="text-center py-8">
                         <LucideCheckCircle size={64} className="text-green-500 mx-auto mb-6" />
                         <h2 className="text-xl font-bold mb-2">Check your email</h2>
-                        <p className="text-slate-500">We've sent a password reset link to your inbox.</p>
+                        <p className="text-slate-500">We&apos;ve sent a password reset link to your inbox.</p>
                     </div>
                 )}
 

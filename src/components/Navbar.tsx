@@ -41,6 +41,7 @@ export default function Navbar() {
 
     // Close menus when path changes
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsOpen(false);
         setIsDropdownOpen(false);
     }, [pathname]);

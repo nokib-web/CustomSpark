@@ -68,7 +68,8 @@ export default function AddItemPage() {
             } else {
                 showError(result.error || "Failed to add product");
             }
-        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
             showError("Something went wrong");
         } finally {
             setIsLoading(false);

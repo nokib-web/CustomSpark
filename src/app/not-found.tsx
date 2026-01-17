@@ -17,9 +17,9 @@ export default function NotFound() {
                 </div>
 
                 <div className="space-y-4">
-                    <h2 className="text-4xl font-black text-slate-900 dark:text-white">You've reached a digital void.</h2>
+                    <h2 className="text-4xl font-black text-slate-900 dark:text-white">You&apos;ve reached a digital void.</h2>
                     <p className="text-slate-500 dark:text-slate-400 text-lg font-medium max-w-md mx-auto leading-relaxed">
-                        The page you're searching for has been moved or doesn't exist. Let's get you back on track.
+                        The page you&apos;re searching for has been moved or doesn&apos;t exist. Let&apos;s get you back on track.
                     </p>
                 </div>
 

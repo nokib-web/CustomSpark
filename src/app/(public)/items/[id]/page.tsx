@@ -12,8 +12,8 @@ async function getItem(id: string): Promise<Item | null> {
         });
         if (!res.ok) return null;
         return res.json();
-    } catch (error) {
-        console.error("Fetch error:", error);
+    } catch (_error) {
+        console.error("Fetch error:", _error);
         return null;
     }
 }
@@ -28,7 +28,7 @@ async function getRelatedItems(category: string, currentId: string): Promise<Ite
         const data = await res.json();
         const items: Item[] = Array.isArray(data.items) ? data.items : [];
         return items.filter(item => item.id !== currentId);
-    } catch (error) {
+    } catch (_error) {
         return [];
     }
 }

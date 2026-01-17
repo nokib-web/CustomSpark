@@ -14,7 +14,7 @@ export default function ItemsError({
             </div>
             <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Catalog Sync Failed</h2>
             <p className="text-slate-500 max-w-sm mx-auto mb-8 font-medium">
-                We couldn't retrieve the product list. This might be a temporary connection issue.
+                We couldn&apos;t retrieve the product list. This might be a temporary connection issue.
             </p>
             <button
                 onClick={() => reset()}

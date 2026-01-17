@@ -7,9 +7,9 @@ export default function ContactSection() {
                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                     <div className="animate-in fade-in slide-in-from-left duration-700">
                         <h2 className="text-primary-600 font-bold tracking-wider uppercase text-sm mb-3">Get in Touch</h2>
-                        <h3 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">Let's Start a Conversation</h3>
+                        <h3 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">Let&apos;s Start a Conversation</h3>
                         <p className="text-lg text-slate-600 dark:text-slate-400 mb-10">
-                            Have a question about a product or interested in partnership? We'd love to hear from you.
+                            Have a question about a product or interested in partnership? We&apos;d love to hear from you.
                         </p>
 
                         <div className="space-y-6">

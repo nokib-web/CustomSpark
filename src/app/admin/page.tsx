@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { LucideUsers, LucidePackage, LucideTrendingUp, LucideSettings } from "lucide-react";
 import Link from "next/link";
+import PerformanceBars from "@/components/PerformanceBars";
 
 export const dynamic = "force-dynamic";
 
@@ -54,16 +55,7 @@ export default async function AdminDashboardPage() {
                             <h2 className="text-2xl font-black">System Performance</h2>
                             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
                         </div>
-                        <div className="space-y-6">
-                            {[1, 2, 3].map((_, i) => (
-                                <div key={i} className="h-4 bg-slate-100 dark:bg-slate-800/50 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-primary-600 rounded-full"
-                                        style={{ width: `${Math.random() * 60 + 30}%` }}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                        <PerformanceBars />
                     </div>
 
                     <div className="bg-primary-600 rounded-[2.5rem] p-10 text-white relative overflow-hidden group">

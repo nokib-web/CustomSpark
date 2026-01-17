@@ -91,7 +91,8 @@ export default function SignupPage() {
             } else {
                 showError(result.error || "Registration failed");
             }
-        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
             showError("Something went wrong");
         } finally {
             setIsLoading(false);
@@ -102,7 +103,8 @@ export default function SignupPage() {
         setIsGoogleLoading(true);
         try {
             await signIn("google", { callbackUrl: "/items" });
-        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
             showError("Failed to sign in with Google.");
             setIsGoogleLoading(false);
         }

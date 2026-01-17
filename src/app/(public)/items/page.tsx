@@ -56,8 +56,8 @@ export default function ItemsPage() {
                 } else {
                     setItems([]);
                 }
-            } catch (error) {
-                console.error("Error fetching items:", error);
+            } catch (_error) {
+                console.error("Error fetching items:", _error);
                 setItems([]);
             } finally {
                 setIsLoading(false);
@@ -208,7 +208,7 @@ export default function ItemsPage() {
                         </div>
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">No products found</h3>
                         <p className="text-slate-500 dark:text-slate-400 max-w-sm">
-                            Try adjusting your search or filters to find what you're looking for.
+                            Try adjusting your search or filters to find what you&apos;re looking for.
                         </p>
                         <button
                             onClick={() => { setSearchQuery(""); setActiveCategory("All"); }}

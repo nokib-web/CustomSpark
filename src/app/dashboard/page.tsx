@@ -21,6 +21,7 @@ export default function DashboardPage() {
         } else if (status === "unauthenticated") {
             // Let middleware handle this, or redirect here
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [status, session]);
 
     const fetchUserItems = async () => {
@@ -44,8 +45,8 @@ export default function DashboardPage() {
                 const myItems = data.items.filter((item: Item) => item.userId === session?.user?.id);
                 setUserItems(myItems);
             }
-        } catch (error) {
-            console.error("Failed to load user items", error);
+        } catch (_error) {
+            console.error("Failed to load user items", _error);
         } finally {
             setIsLoading(false);
         }
@@ -67,7 +68,8 @@ export default function DashboardPage() {
                 const data = await res.json();
                 showError(data.error || "Failed to delete item");
             }
-        } catch (error) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
             showError("An error occurred");
         } finally {
             setDeleteLoading(null);
@@ -185,7 +187,7 @@ export default function DashboardPage() {
                         </div>
                     ) : (
                         <div className="text-center py-12">
-                            <p className="text-slate-500 font-medium mb-6">You haven't listed any items yet.</p>
+                            <p className="text-slate-500 font-medium mb-6">You haven&apos;t listed any items yet.</p>
                             <Link href="/items/add" className="text-primary-600 font-bold hover:underline">Start selling today</Link>
                         </div>
                     )}
