@@ -3,10 +3,14 @@ import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const prismaClientSingleton = () => {
-    const connectionString = process.env.DATABASE_URL;
+    // Attempt to find any valid connection string from common Vercel/Postgres env vars
+    const connectionString =
+        process.env.DATABASE_URL ||
+        process.env.POSTGRES_PRISMA_URL ||
+        process.env.POSTGRES_URL;
 
     if (!connectionString) {
-        console.warn("⚠️ DATABASE_URL is not defined. Prisma might fail at runtime.");
+        console.warn("⚠️ No valid database connection string found (checked DATABASE_URL, POSTGRES_PRISMA_URL, POSTGRES_URL). Prisma might fail at runtime.");
         return new PrismaClient() as any;
     }
 
