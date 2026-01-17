@@ -25,8 +25,13 @@ export async function GET() {
             error: error.message,
             env_check: {
                 DATABASE_URL: !!process.env.DATABASE_URL,
-                POSTGRES_PRISMA_URL: !!process.env.POSTGRES_PRISMA_URL,
                 POSTGRES_URL: !!process.env.POSTGRES_URL,
+            },
+            diagnostics: {
+                has_valid_protocol: process.env.DATABASE_URL?.startsWith("postgres://") || process.env.DATABASE_URL?.startsWith("postgresql://"),
+                url_length: process.env.DATABASE_URL?.length || 0,
+                contains_spaces: /\s/.test(process.env.DATABASE_URL || ""),
+                starts_with_quote: /^["']/.test(process.env.DATABASE_URL || ""),
             },
             hint: "Check your DATABASE_URL in Vercel environment variables and ensure your DB allows connections from Vercel.",
             timestamp: new Date().toISOString(),
