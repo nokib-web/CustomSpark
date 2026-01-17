@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { LucideUsers, LucidePackage, LucideTrendingUp, LucideSettings } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
     // Fetch some admin stats
     const [userCount, itemCount, featuredCount] = await Promise.all([
