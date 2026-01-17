@@ -3,6 +3,8 @@ import { getServerSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { createAuditLog } from "@/lib/audit";
 
+export const dynamic = "force-dynamic";
+
 /**
  * PATCH /api/items/[id]/restore
  * Restore a soft-deleted item (Protected)

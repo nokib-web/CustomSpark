@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 import { SignupSchema } from "@/lib/validations";
 
+export const dynamic = "force-dynamic";
+
 /**
  * POST /api/auth/register
  * Register a new user

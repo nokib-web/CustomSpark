@@ -3,6 +3,8 @@ import { getServerSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { ProfileUpdateSchema } from "@/lib/validations";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/user/profile
  * Fetch current user profile with their recent items

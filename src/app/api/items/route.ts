@@ -5,6 +5,8 @@ import { Prisma } from "@prisma/client";
 import { ItemSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/items
  * Fetch all items with optional filtering, search, and pagination

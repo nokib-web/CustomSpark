@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { users } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 const LoginSchema = z.object({
     email: z.string().email(),
     password: z.string().min(1),

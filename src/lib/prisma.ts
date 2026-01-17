@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 const prismaClientSingleton = () => {
     // Attempt to find any valid connection string from common Vercel/Postgres env vars
@@ -9,23 +11,29 @@ const prismaClientSingleton = () => {
 
     if (!connectionString) {
         console.warn("⚠️ No valid database connection string found (checked DATABASE_URL, POSTGRES_PRISMA_URL, POSTGRES_URL). Prisma might fail at runtime.");
+        // Return dummy client to allow build generation to pass if env vars missing
         return new PrismaClient() as any;
     }
 
     const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
     console.log(`🔌 Initializing Prisma with: ${masked}`);
 
-    // Reverting to standard PrismaClient initialization without adapter
-    // This is often more robust for handling various connection string formats
-    // specifically when 'pg' fails with "Invalid URL".
+    let adapter;
+    try {
+        // We use the adapter to allow for more robust connection pooling using 'pg'
+        // This is the standard way for Prisma 7 with Postgres when not using Accelerate
+        const pool = new Pool({ connectionString });
+        adapter = new PrismaPg(pool);
+    } catch (err) {
+        console.warn("⚠️ Failed to initialize Prisma Adapter (PG). This might happen during build if URL is invalid/dummy. Falling back to standard client logic where possible.", err);
+        // If pool creation fails (e.g. invalid URL), we return a dummy client or cast to any to suppress build errors
+        return new PrismaClient() as any;
+    }
+
     const client = new PrismaClient({
-        datasources: {
-            db: {
-                url: connectionString,
-            },
-        },
+        adapter,
         log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-    } as any);
+    });
 
     return client.$extends({
         query: {

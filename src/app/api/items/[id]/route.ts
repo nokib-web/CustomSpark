@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import { ItemSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/items/[id]
  * Fetch a single item by its ID
