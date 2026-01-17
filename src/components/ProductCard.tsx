@@ -6,6 +6,7 @@ import { LucideHeart, LucideEye, LucideShoppingBag } from "lucide-react";
 import { Item } from "@/types";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { formatPrice } from "@/lib/format";
 
 interface ProductCardProps {
     product: Item;
@@ -75,16 +76,41 @@ export default function ProductCard({ product }: ProductCardProps) {
                         {product.name}
                     </h3>
                     <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">
-                        {product.description}
+                        {product.shortDescription || product.description}
                     </p>
+                    {product.user && (
+                        <div className="flex items-center gap-2 mb-4">
+                            {product.user.image ? (
+                                <Image
+                                    src={product.user.image}
+                                    alt={product.user.name || "Seller"}
+                                    width={20}
+                                    height={20}
+                                    className="rounded-full"
+                                />
+                            ) : (
+                                <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                    {product.user.name?.[0] || "S"}
+                                </div>
+                            )}
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                                {product.user.name || "Verified Seller"}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-between mt-auto">
                     <div className="flex flex-col">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Price</span>
-                        <span className="text-2xl font-black text-slate-900 dark:text-white">
-                            ${product.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                        </span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-2xl font-black text-slate-900 dark:text-white">
+                                {formatPrice(product.price)}
+                            </span>
+                            {product.stock <= 0 && (
+                                <span className="text-[10px] font-bold text-red-500 uppercase">Out of Stock</span>
+                            )}
+                        </div>
                     </div>
                     <Link
                         href={`/items/${product.id}`}

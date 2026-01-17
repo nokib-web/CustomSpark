@@ -75,8 +75,11 @@ export async function getItemsByCategory(category: string, options: PaginationOp
     const { page = 1, limit = 10 } = options;
     try {
         const where = category && category !== "All"
-            ? { category: { equals: category, mode: "insensitive" as const } }
-            : {};
+            ? {
+                category: { equals: category, mode: "insensitive" as const },
+                deletedAt: null
+            }
+            : { deletedAt: null };
 
         const [items, total] = await Promise.all([
             prisma.item.findMany({
@@ -119,7 +122,8 @@ export async function searchItems(query: string, options: PaginationOptions = {}
                 { name: { contains: query, mode: "insensitive" as const } },
                 { description: { contains: query, mode: "insensitive" as const } },
                 { shortDescription: { contains: query, mode: "insensitive" as const } }
-            ]
+            ],
+            deletedAt: null
         };
 
         const [items, total] = await Promise.all([
@@ -157,7 +161,10 @@ export async function searchItems(query: string, options: PaginationOptions = {}
 export async function getFeaturedItems(limit: number = 4) {
     try {
         return await prisma.item.findMany({
-            where: { featured: true },
+            where: {
+                featured: true,
+                deletedAt: null
+            },
             orderBy: { createdAt: "desc" },
             take: limit,
             include: {
@@ -180,7 +187,10 @@ export async function getUserItems(userId: string, options: PaginationOptions = 
     try {
         const [items, total] = await Promise.all([
             prisma.item.findMany({
-                where: { userId },
+                where: {
+                    userId,
+                    deletedAt: null
+                },
                 orderBy: { createdAt: "desc" },
                 take: limit,
                 skip: (page - 1) * limit

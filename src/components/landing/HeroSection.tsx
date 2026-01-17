@@ -4,35 +4,38 @@ import { LucideArrowRight, LucideRocket } from "lucide-react";
 
 export default function HeroSection() {
     return (
-        <section className="relative min-h-[90vh] flex items-center pt-16 overflow-hidden bg-slate-50 dark:bg-slate-950">
+        <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-white dark:bg-slate-950">
             {/* Background Decor */}
-            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-primary-500/10 blur-[100px] rounded-full" />
-            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-indigo-500/10 blur-[100px] rounded-full" />
+            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary-500/10 blur-[120px] rounded-full animate-pulse" />
+            <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-[600px] h-[600px] bg-indigo-500/10 blur-[120px] rounded-full animate-float" />
+
+            <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary-400 rounded-full animate-ping" />
+            <div className="absolute top-1/2 right-1/3 w-3 h-3 bg-indigo-400 rounded-full animate-ping [animation-delay:1s]" />
 
             <div className="container mx-auto px-6 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    <div className="text-left animate-in fade-in slide-in-from-left duration-1000">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm font-semibold mb-6">
+                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                    <div className="text-left">
+                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 text-sm font-bold mb-8 border border-primary-100 dark:border-primary-800/50 animate-in fade-in slide-in-from-top duration-700">
                             <LucideRocket size={16} />
                             <span>The future of commerce is here</span>
                         </div>
-                        <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 dark:text-white leading-tight mb-6">
-                            Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600">Amazing</span> Products
+                        <h1 className="text-6xl lg:text-8xl font-black text-slate-900 dark:text-white leading-[1.1] mb-8 tracking-tighter animate-in fade-in slide-in-from-left duration-1000">
+                            Discover <span className="text-gradient">Amazing</span> Products
                         </h1>
-                        <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-xl leading-relaxed">
+                        <p className="text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-xl leading-relaxed animate-in fade-in slide-in-from-left duration-1000 delay-200">
                             Experience the next generation of online shopping. Handpicked quality items, blazing fast delivery, and a seamless checkout process tailored just for you.
                         </p>
-                        <div className="flex flex-wrap gap-4">
+                        <div className="flex flex-wrap gap-6 animate-in fade-in slide-in-from-up duration-1000 delay-400">
                             <Link
                                 href="/items"
-                                className="px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white rounded-full font-bold transition-all shadow-lg shadow-primary-500/25 flex items-center gap-2 group"
+                                className="px-10 py-5 bg-primary-600 hover:bg-primary-500 text-white rounded-2xl font-bold transition-all shadow-2xl shadow-primary-500/40 flex items-center gap-3 group active:scale-95"
                             >
                                 Browse Items
-                                <LucideArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
+                                <LucideArrowRight className="group-hover:translate-x-2 transition-transform" size={20} />
                             </Link>
                             <Link
                                 href="/login"
-                                className="px-8 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white rounded-full font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm"
+                                className="px-10 py-5 glass text-slate-900 dark:text-white rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95"
                             >
                                 Get Started
                             </Link>

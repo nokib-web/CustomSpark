@@ -9,7 +9,7 @@ import { createAuditLog } from "@/lib/audit";
  * Fetch a single item by its ID
  */
 export async function GET(
-    req: NextRequest,
+    _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
@@ -143,7 +143,7 @@ export async function PUT(
  * Delete an item (Protected)
  */
 export async function DELETE(
-    req: NextRequest,
+    _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {

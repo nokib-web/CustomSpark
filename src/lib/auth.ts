@@ -7,7 +7,7 @@ import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma),
+    adapter: PrismaAdapter(prisma as any),
     session: {
         strategy: "jwt",
     },
@@ -51,6 +51,7 @@ export const authOptions: NextAuthOptions = {
                         email: user.email,
                         name: user.name,
                         image: user.image,
+                        role: user.role,
                     };
                 } catch (error) {
                     console.error("Auth validation error:", error);
@@ -63,12 +64,14 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
+                token.role = (user as any).role;
             }
             return token;
         },
         async session({ session, token }) {
             if (token && session.user) {
-                (session.user as any).id = token.id;
+                session.user.id = token.id as string;
+                (session.user as any).role = token.role;
             }
             return session;
         },

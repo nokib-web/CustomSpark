@@ -12,7 +12,29 @@ const prismaClientSingleton = () => {
     }
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
-    return new PrismaClient({ adapter });
+    const client = new PrismaClient({
+        adapter,
+        log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
+
+    return client.$extends({
+        query: {
+            $allModels: {
+                async $allOperations({ operation, model, args, query }) {
+                    const start = performance.now();
+                    const result = await query(args);
+                    const end = performance.now();
+                    const duration = end - start;
+
+                    if (duration > 500) { // Log queries slower than 500ms
+                        console.warn(`⚠️ Slow Query [${model}.${operation}] took ${duration.toFixed(2)}ms`);
+                    }
+
+                    return result;
+                },
+            },
+        },
+    });
 };
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>;

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Item } from "@/types";
 import { cn } from "@/lib/utils";
+import { formatPrice, formatStock } from "@/lib/format";
 
 interface ProductDetailsViewProps {
     item: Item;
@@ -27,8 +28,14 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
     const [activeTab, setActiveTab] = useState("description");
     const [isWishlisted, setIsWishlisted] = useState(false);
 
-    const incrementQty = () => setQuantity(prev => prev + 1);
+    const incrementQty = () => setQuantity(prev => {
+        if (item.stock && prev >= item.stock) return prev;
+        return prev + 1;
+    });
+
     const decrementQty = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+
+    const stockInfo = formatStock(item.stock);
 
     const tabs = [
         { id: "description", label: "Description" },
@@ -89,9 +96,17 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                 {/* Right: Product Info */}
                 <div className="flex flex-col">
                     <div className="mb-8">
-                        <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-4">
-                            {item.category}
-                        </span>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+                                {item.category}
+                            </span>
+                            {item.tags && item.tags.map(tag => (
+                                <span key={tag} className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 leading-tight">
                             {item.name}
                         </h1>
@@ -100,13 +115,13 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                                 {[...Array(5)].map((_, i) => <LucideStar key={i} size={18} fill="currentColor" />)}
                             </div>
                             <span className="text-sm font-bold text-slate-400">(128 Verified Reviews)</span>
-                            <span className="text-green-500 text-sm font-black flex items-center gap-1">
-                                <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                                In Stock
+                            <span className={cn("text-sm font-black flex items-center gap-1", stockInfo.color.split(' ')[0])}>
+                                <div className={cn("h-2 w-2 rounded-full animate-pulse", stockInfo.color.split(' ')[0].replace('text-', 'bg-'))} />
+                                {stockInfo.label}
                             </span>
                         </div>
                         <div className="text-4xl font-black text-slate-900 dark:text-white">
-                            ${(item.price as number).toFixed(2)}
+                            {formatPrice(item.price)}
                         </div>
                     </div>
 
@@ -114,12 +129,40 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                         {item.description}
                     </p>
 
+                    {item.user && (
+                        <div className="flex items-center gap-4 mb-8 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800">
+                            {item.user.image ? (
+                                <Image
+                                    src={item.user.image}
+                                    alt={item.user.name || "Seller"}
+                                    width={48}
+                                    height={48}
+                                    className="rounded-full shadow-md"
+                                />
+                            ) : (
+                                <div className="h-12 w-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 text-lg">
+                                    {item.user.name?.[0] || "S"}
+                                </div>
+                            )}
+                            <div>
+                                <h4 className="font-bold text-slate-900 dark:text-white text-sm">Listed by {item.user.name || "Verified Seller"}</h4>
+                                <div className="text-xs text-slate-500 mt-1 flex gap-3">
+                                    <span>Added {new Date(item.createdAt).toLocaleDateString()}</span>
+                                    {new Date(item.updatedAt) > new Date(item.createdAt) && (
+                                        <span>Updated {new Date(item.updatedAt).toLocaleDateString()}</span>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="space-y-6 pt-8 border-t border-slate-100 dark:border-slate-800 mb-10">
                         <div className="flex flex-col sm:flex-row items-center gap-6">
                             <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 w-full sm:w-auto">
                                 <button
                                     onClick={decrementQty}
-                                    className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                    disabled={item.stock === 0}
+                                    className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-50"
                                     aria-label="Decrease quantity"
                                 >
                                     <LucideMinus size={20} />
@@ -127,15 +170,19 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                                 <span className="w-12 text-center font-black text-lg" aria-live="polite">{quantity}</span>
                                 <button
                                     onClick={incrementQty}
-                                    className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                                    disabled={item.stock === 0 || quantity >= item.stock}
+                                    className="h-12 w-12 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors disabled:opacity-50"
                                     aria-label="Increase quantity"
                                 >
                                     <LucidePlus size={20} />
                                 </button>
                             </div>
-                            <button className="flex-1 w-full flex items-center justify-center gap-3 bg-primary-600 hover:bg-primary-500 text-white py-4 rounded-2xl font-black transition-all shadow-xl shadow-primary-500/20 active:scale-[0.98] group">
+                            <button
+                                disabled={item.stock === 0}
+                                className="flex-1 w-full flex items-center justify-center gap-3 bg-primary-600 hover:bg-primary-500 text-white py-4 rounded-2xl font-black transition-all shadow-xl shadow-primary-500/20 active:scale-[0.98] group disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
                                 <LucideShoppingBag size={20} />
-                                Add to Cart
+                                {item.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                             </button>
                         </div>
 
@@ -196,12 +243,12 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                     {activeTab === "specifications" && (
                         <div className="grid sm:grid-cols-2 gap-y-6 gap-x-12">
                             {[
-                                ["Material", "Reinforced Polymer"],
-                                ["Weight", "1.2 kg"],
-                                ["Dimensions", "15 x 20 x 5 cm"],
-                                ["Connectivity", "Bluetooth 5.2 / USB-C"],
-                                ["Battery Life", "Up to 48 hours"],
-                                ["Color", "Starry Night / Aurora Silver"],
+                                ["Material", "Reinforced Polymer"], // Placeholder
+                                ["Weight", "1.2 kg"], // Placeholder
+                                ["Dimensions", "15 x 20 x 5 cm"], // Placeholder
+                                ["Connectivity", "Bluetooth 5.2 / USB-C"], // Placeholder
+                                ["Battery Life", "Up to 48 hours"], // Placeholder
+                                ["Color", "Starry Night / Aurora Silver"], // Placeholder
                                 ["SKU", item.sku || "N/A"],
                                 ["Stock", item.stock.toString()]
                             ].map(([k, v], i) => (
@@ -238,7 +285,7 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                                 />
                             </div>
                             <h4 className="font-bold text-slate-900 dark:text-white mb-1 group-hover:text-primary-600 transition-colors line-clamp-1">{rel.name}</h4>
-                            <p className="text-lg font-black text-primary-600">${(rel.price as number).toFixed(2)}</p>
+                            <p className="text-lg font-black text-primary-600">{formatPrice(rel.price)}</p>
                         </Link>
                     ))}
                 </div>

@@ -33,24 +33,30 @@ const features = [
 
 export default function FeaturesSection() {
     return (
-        <section id="features" className="py-24 bg-white dark:bg-slate-900">
+        <section id="features" className="py-24 bg-white dark:bg-slate-950">
             <div className="container mx-auto px-6">
-                <div className="text-center max-w-3xl mx-auto mb-16">
-                    <h2 className="text-primary-600 font-bold tracking-wider uppercase text-sm mb-3">Core Features</h2>
-                    <p className="text-4xl font-bold text-slate-900 dark:text-white mb-6">Everything you need to ship faster</p>
-                    <p className="text-lg text-slate-600 dark:text-slate-400">
+                <div className="text-center max-w-3xl mx-auto mb-20 animate-in fade-in slide-in-from-bottom duration-1000">
+                    <div className="inline-block px-4 py-1.5 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold uppercase tracking-widest mb-6">
+                        Why Choose Us
+                    </div>
+                    <h2 className="text-5xl lg:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tighter">
+                        Everything you need to <span className="text-gradient">shining</span>
+                    </h2>
+                    <p className="text-xl text-slate-600 dark:text-slate-400">
                         We focus on the details that matter most to our customers, ensuring a seamless and reliable experience.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
                     {features.map((feature, idx) => (
-                        <div key={idx} className="p-8 rounded-3xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:-translate-y-1 transition-all group">
-                            <div className={`h-14 w-14 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
-                                <feature.icon className={`h-8 w-8 ${feature.color}`} />
+                        <div key={idx} className="p-10 rounded-[2.5rem] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:border-primary-500/50 hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/5 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2 group-hover:scale-150 transition-transform duration-700" />
+
+                            <div className={`h-16 w-16 rounded-2xl ${feature.bg} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform group-hover:rotate-6`}>
+                                <feature.icon className={`h-9 w-9 ${feature.color}`} />
                             </div>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{feature.title}</h3>
-                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                            <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">{feature.title}</h3>
+                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed font-medium">
                                 {feature.desc}
                             </p>
                         </div>

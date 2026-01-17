@@ -24,7 +24,7 @@ export async function createAuditLog(
     changes?: Record<string, any>
 ) {
     try {
-        await prisma.auditLog.create({
+        await (prisma as any).auditLog.create({
             data: {
                 userId,
                 action,

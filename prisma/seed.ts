@@ -36,8 +36,6 @@ async function main() {
     console.log('👤 Created test users.');
 
     // Sample Items Data
-    const categories = ['Electronics', 'Fashion', 'Home', 'Sports'];
-
     const items = [
         {
             name: 'Premium Wireless Headphones',

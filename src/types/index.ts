@@ -23,9 +23,18 @@ export interface Item {
     category: string;
     imageUrl: string;
     stock: number;
-    sku?: string;
+    sku?: string | null;
     tags: string[];
+    featured: boolean;
+    userId: string;
+    user?: {
+        name: string | null;
+        email: string | null;
+        image: string | null;
+    };
     createdAt: Date | string;
+    updatedAt: Date | string;
+    deletedAt?: Date | string | null;
 }
 
 /**

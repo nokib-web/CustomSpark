@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { showSuccess, showError } from "@/lib/toast";
 import {
     LucidePackage,
@@ -40,11 +39,12 @@ export default function AddItemPage() {
         setValue,
         formState: { errors },
     } = useForm<AddItemFormValues>({
-        resolver: zodResolver(ItemSchema),
+        resolver: zodResolver(ItemSchema) as any,
         defaultValues: {
             tags: [],
             stock: 0,
             price: 0,
+            featured: false,
         },
     });
 
@@ -325,6 +325,18 @@ export default function AddItemPage() {
                                         className="flex-1 bg-transparent outline-none px-4 text-sm font-medium min-w-[150px]"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="md:col-span-2 flex items-center gap-2 ml-1 mt-4">
+                                <input
+                                    type="checkbox"
+                                    id="featured"
+                                    {...register("featured")}
+                                    className="w-5 h-5 accent-primary-600 cursor-pointer"
+                                />
+                                <label htmlFor="featured" className="text-sm font-bold text-slate-700 dark:text-slate-300 cursor-pointer">
+                                    Mark as Featured Product
+                                </label>
                             </div>
                         </div>
                     </div>

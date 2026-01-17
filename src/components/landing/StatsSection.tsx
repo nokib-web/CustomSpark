@@ -7,19 +7,22 @@ const stats = [
 
 export default function StatsSection() {
     return (
-        <section className="py-20 bg-primary-600 relative overflow-hidden">
-            {/* Decorative blobs */}
-            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-black/10 rounded-full translate-x-1/3 translate-y-1/3" />
+        <section className="py-24 relative overflow-hidden bg-slate-950">
+            {/* Background elements */}
+            <div className="absolute inset-0 bg-primary-600/10" />
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent" />
 
             <div className="container mx-auto px-6 relative z-10">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-12">
                     {stats.map((stat, i) => (
-                        <div key={i} className="text-center group">
-                            <div className="text-4xl lg:text-5xl font-black text-white mb-2 transform group-hover:scale-110 transition-transform">
-                                {stat.value}
+                        <div key={i} className="text-center group p-8 rounded-3xl glass hover:bg-white/10 transition-all duration-500">
+                            <div className="text-5xl lg:text-6xl font-black text-white mb-3 tracking-tighter group-hover:scale-110 transition-transform">
+                                <span className={`bg-clip-text text-transparent bg-gradient-to-r ${stat.color}`}>
+                                    {stat.value}
+                                </span>
                             </div>
-                            <div className="text-white/80 font-medium uppercase tracking-widest text-xs">
+                            <div className="text-slate-400 font-bold uppercase tracking-widest text-xs">
                                 {stat.label}
                             </div>
                         </div>

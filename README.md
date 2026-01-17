@@ -37,60 +37,62 @@ Custom Spark is a modern, high-performance e-commerce platform built with **Next
 
 ---
 
-## 📋 Prerequisites
+## 🚀 Getting Started
+
+### Prerequisites
 
 - **Node.js**: v18.17.0 or higher
 - **PostgreSQL**: v14.0 or higher
 - **npm / yarn / pnpm**: Latest version recommended
 
----
+### Installation
 
-## ⚙️ Installation
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/nokib-web/CustomSpark.git
+    cd customspark
+    ```
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/nokib-web/CustomSpark.git
-   cd customspark
-   ```
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
 
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+3.  **Configure Environment Variables**
+    Create a `.env.local` file in the root directory and add:
+    ```env
+    # Database
+    DATABASE_URL="postgresql://username:password@localhost:5432/ecommerce_db?schema=public"
 
-3. **Configure Environment Variables**
-   Create a `.env.local` file in the root directory and add:
-   ```env
-   # Database
-   DATABASE_URL="postgresql://username:password@localhost:5432/ecommerce_db?schema=public"
+    # NextAuth
+    NEXTAUTH_URL="http://localhost:3000"
+    NEXTAUTH_SECRET="your_secret_here"
+    ```
 
-   # NextAuth
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your_secret_here"
+4.  **Database Setup**
+    ```bash
+    # Generate Prisma Client
+    npx prisma generate
 
-   # Google OAuth
-   GOOGLE_CLIENT_ID="your_id_here"
-   GOOGLE_CLIENT_SECRET="your_secret_here"
-   ```
+    # Run Migrations
+    npx prisma migrate dev
 
-4. **Initialize Database**
-   ```bash
-   # Generate Prisma Client
-   npm run db:generate
+    # Seed initial data
+    npx prisma db seed
+    ```
 
-   # Run Migrations
-   npm run db:migrate
+5.  **Run Locally**
+    ```bash
+    npm run dev
+    ```
 
-   # Seed initial data
-   npm run db:seed
-   ```
+### 📚 Deployment
+This project is optimized for deployment on **Vercel**. 
 
-5. **Run Locally**
-   ```bash
-   npm run dev
-   ```
-
----
+1. **Connect your repository** to Vercel.
+2. **Environment Variables**: Add all variables from `.env.local` to Vercel.
+3. **Build Command**: Vercel will automatically detect settings, but if needed: `prisma generate && next build`.
+4. **Database**: Use a managed PostgreSQL provider (e.g., Supabase, Neon) and provide the `DATABASE_URL`.
 
 ## 🏗 Database Management
 

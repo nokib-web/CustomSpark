@@ -8,7 +8,7 @@ import { createAuditLog } from "@/lib/audit";
  * Restore a soft-deleted item (Protected)
  */
 export async function PATCH(
-    req: NextRequest,
+    _req: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
@@ -36,7 +36,7 @@ export async function PATCH(
         }
 
         // Check ownership or admin status
-        const userId = (session.user as any).id;
+        const userId = session.user.id;
         const isAdmin = session.user.email === 'admin@example.com';
 
         if (existingItem.userId !== userId && !isAdmin) {
@@ -46,7 +46,7 @@ export async function PATCH(
             );
         }
 
-        if (!existingItem.deletedAt) {
+        if (!(existingItem as any).deletedAt) {
             return NextResponse.json(
                 { message: "Item is not deleted" },
                 { status: 400 }

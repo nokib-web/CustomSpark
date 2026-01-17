@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { ItemSchema } from "@/lib/validations";
 import { createAuditLog } from "@/lib/audit";
 
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
 
         // Build where clause dynamically
         // Ensure we only fetch items that are NOT deleted
-        const andFilters: any[] = [
+        const andFilters: Prisma.ItemWhereInput[] = [
             { deletedAt: null }
         ];
 
@@ -49,10 +50,10 @@ export async function GET(req: NextRequest) {
             });
         }
 
-        const where = { AND: andFilters };
+        const where: Prisma.ItemWhereInput = { AND: andFilters };
 
         // Determine sort order
-        let orderBy: any = { createdAt: 'desc' };
+        let orderBy: Prisma.ItemOrderByWithRelationInput = { createdAt: 'desc' };
         if (sort === "price-low" || sort === "price-asc") orderBy = { price: 'asc' };
         if (sort === "price-high" || sort === "price-desc") orderBy = { price: 'desc' };
         if (sort === "oldest") orderBy = { createdAt: 'asc' };
@@ -129,10 +130,11 @@ export async function POST(req: NextRequest) {
             imageUrl,
             stock,
             tags,
-            sku
+            sku,
+            featured
         } = validation.data;
 
-        const userId = (session.user as any).id;
+        const userId = session.user.id;
 
         const item = await prisma.item.create({
             data: {
@@ -145,6 +147,7 @@ export async function POST(req: NextRequest) {
                 stock,
                 tags,
                 sku,
+                featured,
                 userId
             },
             include: {

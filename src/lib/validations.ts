@@ -47,6 +47,7 @@ export const ItemSchema = z.object({
     stock: z.number().int().nonnegative(),
     sku: z.string().optional(),
     tags: z.array(z.string()),
+    featured: z.boolean().default(false),
 });
 
 export const AddItemSchema = ItemSchema;

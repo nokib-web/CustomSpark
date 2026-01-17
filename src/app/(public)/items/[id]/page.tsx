@@ -25,7 +25,8 @@ async function getRelatedItems(category: string, currentId: string): Promise<Ite
             cache: "no-store",
         });
         if (!res.ok) return [];
-        const items: Item[] = await res.json();
+        const data = await res.json();
+        const items: Item[] = Array.isArray(data.items) ? data.items : [];
         return items.filter(item => item.id !== currentId);
     } catch (error) {
         return [];

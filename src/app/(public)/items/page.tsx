@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Item } from "@/types";
 import ProductCard from "@/components/ProductCard";
 import {
@@ -9,7 +9,6 @@ import {
     LucideFilter,
     LucideArrowUpDown,
     LucideInbox,
-    LucideLoader2,
     LucideChevronDown
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -28,24 +27,35 @@ export default function ItemsPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("All");
     const [sortBy, setSortBy] = useState("newest");
-    const [displayCount, setDisplayCount] = useState(8);
+
+    // Server-side Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
         const fetchItems = async () => {
             setIsLoading(true);
             try {
-                // Building the query string for server-side filtering
                 const params = new URLSearchParams();
                 if (activeCategory !== "All") params.append("category", activeCategory);
                 if (searchQuery) params.append("search", searchQuery);
                 params.append("sort", sortBy);
-                params.append("limit", "100"); // Fetch more for client-side display count logic
+                params.append("page", currentPage.toString());
+                params.append("limit", "8");
 
                 const res = await fetch(`/api/items?${params.toString()}`);
                 const data = await res.json();
 
-                // Handle the new paginated structure { items: [], pagination: {} }
-                setItems(Array.isArray(data.items) ? data.items : []);
+                if (data.items) {
+                    setItems(data.items);
+                    if (data.pagination) {
+                        setTotalPages(data.pagination.pages);
+                        setTotalItems(data.pagination.total);
+                    }
+                } else {
+                    setItems([]);
+                }
             } catch (error) {
                 console.error("Error fetching items:", error);
                 setItems([]);
@@ -53,16 +63,19 @@ export default function ItemsPage() {
                 setIsLoading(false);
             }
         };
-        fetchItems();
+
+        // Debounce search slightly
+        const timeoutId = setTimeout(() => {
+            fetchItems();
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [activeCategory, searchQuery, sortBy, currentPage]);
+
+    // Reset page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
     }, [activeCategory, searchQuery, sortBy]);
-
-    // Since we are now filtering on the server, we just need to handle the display
-    const filteredAndSortedItems = useMemo(() => {
-        return items;
-    }, [items]);
-
-    const displayedItems = filteredAndSortedItems.slice(0, displayCount);
-    const hasMore = filteredAndSortedItems.length > displayCount;
 
     return (
         <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20">
@@ -131,7 +144,7 @@ export default function ItemsPage() {
                 {/* Results Info */}
                 <div className="flex items-center justify-between mb-8 px-2">
                     <p className="text-sm font-bold text-slate-500">
-                        Showing <span className="text-slate-900 dark:text-white">{displayedItems.length}</span> of <span className="text-slate-900 dark:text-white">{filteredAndSortedItems.length}</span> results
+                        Showing <span className="text-slate-900 dark:text-white">{items.length}</span> of <span className="text-slate-900 dark:text-white">{totalItems}</span> results
                     </p>
                     <div className="flex items-center gap-2 text-slate-400">
                         <LucideLayoutGrid size={16} />
@@ -151,10 +164,10 @@ export default function ItemsPage() {
                             </div>
                         ))}
                     </div>
-                ) : displayedItems.length > 0 ? (
+                ) : items.length > 0 ? (
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                            {displayedItems.map((item, idx) => (
+                            {items.map((item, idx) => (
                                 <div
                                     key={item.id}
                                     className="animate-in fade-in slide-in-from-bottom duration-500"
@@ -165,15 +178,25 @@ export default function ItemsPage() {
                             ))}
                         </div>
 
-                        {/* Load More */}
-                        {hasMore && (
-                            <div className="mt-16 flex justify-center">
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className="mt-16 flex justify-center items-center gap-4">
                                 <button
-                                    onClick={() => setDisplayCount(prev => prev + 4)}
-                                    className="px-10 py-4 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white font-bold rounded-2xl hover:border-primary-600 hover:text-primary-600 transition-all active:scale-95 flex items-center gap-2 group"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                    className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                                 >
-                                    Load More Products
-                                    <LucideChevronDown className="group-hover:translate-y-1 transition-transform" />
+                                    Previous
+                                </button>
+                                <span className="text-slate-600 dark:text-slate-400 font-bold">
+                                    Page {currentPage} of {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                                >
+                                    Next
                                 </button>
                             </div>
                         )}
