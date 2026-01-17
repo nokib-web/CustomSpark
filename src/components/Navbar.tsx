@@ -78,6 +78,7 @@ export default function Navbar() {
                                 src="/favicon.png"
                                 alt="Custom Spark Logo"
                                 fill
+                                sizes="40px"
                                 className="object-contain group-hover:scale-110 transition-transform duration-300"
                             />
                             <div className="absolute inset-0 bg-primary-400/20 blur-xl rounded-full scale-150 group-hover:scale-200 transition-transform" />

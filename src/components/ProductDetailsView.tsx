@@ -53,6 +53,7 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                             src={item.imageUrl}
                             alt={item.name}
                             fill
+                            sizes="(max-width: 1024px) 100vw, 50vw"
                             priority
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                         />
@@ -86,6 +87,7 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                                     src={item.imageUrl}
                                     alt={`${item.name} thumbnail ${i}`}
                                     fill
+                                    sizes="25vw"
                                     className="object-cover"
                                 />
                             </div>
@@ -281,6 +283,7 @@ export default function ProductDetailsView({ item, relatedItems }: ProductDetail
                                     src={rel.imageUrl}
                                     alt={rel.name}
                                     fill
+                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                                 />
                             </div>

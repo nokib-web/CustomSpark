@@ -9,15 +9,16 @@ const prismaClientSingleton = () => {
         process.env.POSTGRES_URL;
 
     if (!connectionString) {
-        console.warn("⚠️ No valid database connection string found. Using basic Prisma Client.");
+        throw new Error(
+            "❌ DATABASE_URL is not defined. Please add it to your .env.local file.\n" +
+            "Example: DATABASE_URL=postgresql://user:password@localhost:5432/database"
+        );
     }
 
-    if (connectionString) {
-        const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
-        console.log(`🔌 Initializing Prisma with: ${masked}`);
-    }
+    const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
+    console.log(`🔌 Initializing Prisma with: ${masked}`);
 
-    const pool = new pg.Pool();
+    const pool = new pg.Pool({ connectionString });
     const adapter = new PrismaPg(pool);
 
     const client = new PrismaClient({

@@ -35,6 +35,7 @@ export default function Footer() {
                                     src="/favicon.png"
                                     alt="Custom Spark Logo"
                                     fill
+                                    sizes="32px"
                                     className="object-contain"
                                 />
                             </div>

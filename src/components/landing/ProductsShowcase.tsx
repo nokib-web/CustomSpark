@@ -60,6 +60,7 @@ export default function ProductsShowcase() {
                                         src={product.imageUrl}
                                         alt={product.name}
                                         fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                                     />
                                     <div className="absolute top-4 right-4 bg-white/90 dark:bg-slate-900/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary-600 z-10">

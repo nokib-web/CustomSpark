@@ -47,6 +47,7 @@ export default function HeroSection() {
                                 src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop"
                                 alt="Premium Product Showcase"
                                 fill
+                                sizes="(max-width: 1024px) 100vw, 50vw"
                                 priority
                                 className="object-cover"
                             />
