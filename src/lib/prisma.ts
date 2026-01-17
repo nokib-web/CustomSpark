@@ -6,7 +6,8 @@ const prismaClientSingleton = () => {
     const connectionString = process.env.DATABASE_URL;
 
     if (!connectionString) {
-        throw new Error("DATABASE_URL is not defined. Please set it in your environment variables.");
+        console.warn("⚠️ DATABASE_URL is not defined. Prisma might fail at runtime.");
+        return new PrismaClient() as any;
     }
 
     const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
