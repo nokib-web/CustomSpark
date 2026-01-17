@@ -4,12 +4,14 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 const prismaClientSingleton = () => {
     const connectionString = process.env.DATABASE_URL;
-    if (connectionString) {
-        const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
-        console.log(`🔌 Initializing Prisma with: ${masked}`);
-    } else {
-        console.warn("⚠️ DATABASE_URL is not defined in environment variables");
+
+    if (!connectionString) {
+        throw new Error("DATABASE_URL is not defined. Please set it in your environment variables.");
     }
+
+    const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
+    console.log(`🔌 Initializing Prisma with: ${masked}`);
+
     const pool = new Pool({ connectionString });
     const adapter = new PrismaPg(pool);
     const client = new PrismaClient({
