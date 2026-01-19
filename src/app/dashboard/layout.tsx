@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "@/lib/auth";
 import DashboardSidebar from "@/components/DashboardSidebar";
 
-export default async function AdminLayout({
+export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
@@ -11,10 +11,6 @@ export default async function AdminLayout({
 
     if (!session) {
         redirect("/login");
-    }
-
-    if (session.user.role !== "ADMIN") {
-        redirect("/dashboard");
     }
 
     return (

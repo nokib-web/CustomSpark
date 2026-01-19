@@ -3,32 +3,44 @@ import Link from "next/link";
 import { LucideChevronRight, LucideHome } from "lucide-react";
 import ProductDetailsView from "@/components/ProductDetailsView";
 import { Item } from "@/types";
+import prisma from "@/lib/prisma";
 
 async function getItem(id: string): Promise<Item | null> {
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     try {
-        const res = await fetch(`${baseUrl}/api/items/${id}`, {
-            cache: "no-store", // Ensure we get fresh data
+        const item = await prisma.item.findUnique({
+            where: { id, deletedAt: null },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        image: true
+                    }
+                }
+            }
         });
-        if (!res.ok) return null;
-        return res.json();
+        return item as any;
     } catch (_error) {
-        console.error("Fetch error:", _error);
+        console.error("Prisma error:", _error);
         return null;
     }
 }
 
 async function getRelatedItems(category: string, currentId: string): Promise<Item[]> {
-    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     try {
-        const res = await fetch(`${baseUrl}/api/items?category=${category}&limit=5`, {
-            cache: "no-store",
+        const items = await prisma.item.findMany({
+            where: {
+                category,
+                id: { not: currentId },
+                deletedAt: null
+            },
+            take: 4,
+            orderBy: { createdAt: "desc" }
         });
-        if (!res.ok) return [];
-        const data = await res.json();
-        const items: Item[] = Array.isArray(data.items) ? data.items : [];
-        return items.filter(item => item.id !== currentId);
-    } catch (_error) {
+        return items as any;
+    } catch (error) {
+        console.error("Failed to fetch related items:", error);
         return [];
     }
 }

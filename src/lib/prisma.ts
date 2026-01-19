@@ -9,10 +9,7 @@ const prismaClientSingleton = () => {
         process.env.POSTGRES_URL;
 
     if (!connectionString) {
-        throw new Error(
-            "❌ DATABASE_URL is not defined. Please add it to your .env.local file.\n" +
-            "Example: DATABASE_URL=postgresql://user:password@localhost:5432/database"
-        );
+        throw new Error("❌ DATABASE_URL is not defined in environment variables.");
     }
 
     const masked = connectionString.replace(/:([^:@]+)@/, ':****@');
@@ -21,12 +18,10 @@ const prismaClientSingleton = () => {
     const pool = new pg.Pool({ connectionString });
     const adapter = new PrismaPg(pool);
 
-    const client = new PrismaClient({
+    return new PrismaClient({
         adapter,
         log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-    });
-
-    return client.$extends({
+    }).$extends({
         query: {
             $allModels: {
                 async $allOperations({ operation, model, args, query }) {
@@ -52,7 +47,7 @@ const globalForPrisma = globalThis as unknown as {
     prisma: PrismaClientSingleton | undefined;
 };
 
-const prisma = (globalForPrisma.prisma ?? prismaClientSingleton()) as any;
+const prisma = (globalForPrisma.prisma ?? prismaClientSingleton());
 
 export default prisma;
 

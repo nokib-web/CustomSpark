@@ -18,11 +18,12 @@ export async function GET() {
             },
             timestamp: new Date().toISOString(),
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
         return NextResponse.json({
             status: "error",
             message: "Failed to connect to the database.",
-            error: error.message,
+            error: errorMessage,
             env_check: {
                 DATABASE_URL: !!process.env.DATABASE_URL,
                 POSTGRES_URL: !!process.env.POSTGRES_URL,

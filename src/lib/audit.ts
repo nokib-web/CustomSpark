@@ -21,10 +21,10 @@ export async function createAuditLog(
     action: AuditAction,
     entityType: string,
     entityId: string,
-    changes?: Record<string, any>
+    changes?: Record<string, unknown>
 ) {
     try {
-        await (prisma as any).auditLog.create({
+        await prisma.auditLog.create({
             data: {
                 userId,
                 action,

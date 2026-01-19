@@ -19,10 +19,9 @@ import {
     LucideSave
 } from "lucide-react";
 import Link from "next/link";
-import { ItemSchema, AddItemInput } from "@/lib/validations";
+import Image from "next/image";
+import { ItemSchema, type AddItemInput } from "@/lib/validations";
 import { cn } from "@/lib/utils";
-
-type AddItemFormValues = AddItemInput;
 
 const CATEGORIES = ["Electronics", "Fashion", "Home", "Sports", "Accessories"];
 
@@ -38,19 +37,25 @@ export default function AddItemPage() {
         watch,
         setValue,
         formState: { errors },
-    } = useForm<AddItemFormValues>({
-        resolver: zodResolver(ItemSchema) as any,
+    } = useForm<AddItemInput>({
+        resolver: zodResolver(ItemSchema),
         defaultValues: {
+            name: "",
+            category: "",
+            price: 0,
+            shortDescription: "",
+            description: "",
+            imageUrl: "",
             tags: [],
             stock: 0,
-            price: 0,
             featured: false,
+            sku: "",
         },
     });
 
     const imageUrl = watch("imageUrl");
 
-    const onSubmit = async (data: AddItemFormValues) => {
+    const onSubmit = async (data: AddItemInput) => {
         setIsLoading(true);
         try {
             const res = await fetch("/api/items", {
@@ -103,8 +108,8 @@ export default function AddItemPage() {
     };
 
     return (
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20">
-            <div className="container mx-auto px-6 max-w-4xl">
+        <section className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20 px-6 animate-in fade-in duration-700">
+            <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-10">
                     <div>
@@ -256,9 +261,9 @@ export default function AddItemPage() {
                                 </p>
                             </div>
 
-                            <div className="aspect-square rounded-[2rem] overflow-hidden bg-slate-100 dark:bg-slate-800 border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center relative group">
+                            <div className="aspect-square rounded-4xl overflow-hidden bg-slate-100 dark:bg-slate-800 border-4 border-dashed border-slate-200 dark:border-slate-700 flex items-center justify-center relative group">
                                 {imageUrl && !errors.imageUrl ? (
-                                    <img src={imageUrl} alt="Preview" className="w-full h-full object-cover" />
+                                    <Image src={imageUrl} alt="Preview" fill className="object-cover" />
                                 ) : (
                                     <div className="text-slate-400 flex flex-col items-center gap-2">
                                         <LucideImage size={40} />
@@ -296,7 +301,7 @@ export default function AddItemPage() {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 ml-1 flex justify-between">
+                                <label className="flex justify-between text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 ml-1">
                                     SKU Code
                                     <button type="button" onClick={generateSKU} className="text-primary-600 text-[10px] uppercase font-black hover:underline tracking-widest">Auto-Generate</button>
                                 </label>
@@ -309,7 +314,7 @@ export default function AddItemPage() {
 
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 ml-1">Tags & Keywords</label>
-                                <div className="p-2 min-h-[56px] bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl flex flex-wrap gap-2 items-center">
+                                <div className="p-2 min-h-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl flex flex-wrap gap-2 items-center">
                                     {tags.map(tag => (
                                         <span key={tag} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-600 text-white text-xs font-black rounded-xl">
                                             {tag}
@@ -323,7 +328,7 @@ export default function AddItemPage() {
                                         onChange={(e) => setTagInput(e.target.value)}
                                         onKeyDown={handleAddTag}
                                         placeholder={tags.length === 0 ? "Type and press Enter to add tags..." : "Add more..."}
-                                        className="flex-1 bg-transparent outline-none px-4 text-sm font-medium min-w-[150px]"
+                                        className="flex-1 bg-transparent outline-none px-4 text-sm font-medium min-w-37.5"
                                     />
                                 </div>
                             </div>
@@ -368,6 +373,6 @@ export default function AddItemPage() {
                     </div>
                 </form>
             </div>
-        </main>
+        </section>
     );
 }

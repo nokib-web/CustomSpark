@@ -23,22 +23,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const signupSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
-    password: z.string()
-        .min(8, "Password must be at least 8 characters")
-        .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-        .regex(/[0-9]/, "Must contain at least one number")
-        .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-    terms: z.boolean().refine(val => val === true, "You must accept the terms"),
-}).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-});
+import { SignupSchema } from "@/lib/validations";
 
-type SignupFormValues = z.infer<typeof signupSchema>;
+type SignupFormValues = z.infer<typeof SignupSchema>;
 
 export default function SignupPage() {
     const router = useRouter();
@@ -53,7 +40,7 @@ export default function SignupPage() {
         watch,
         formState: { errors },
     } = useForm<SignupFormValues>({
-        resolver: zodResolver(signupSchema),
+        resolver: zodResolver(SignupSchema),
         defaultValues: {
             terms: false,
         }

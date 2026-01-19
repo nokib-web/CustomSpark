@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { NextAuthOptions, getServerSession as getNextAuthSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -5,17 +6,27 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
 import prisma from "@/lib/prisma";
+import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 
 const getPrismaAdapter = () => {
-    try {
-        return PrismaAdapter(prisma) as any;
-    } catch {
-        return undefined;
-    }
+    const connectionString =
+        process.env.DATABASE_URL ||
+        process.env.POSTGRES_PRISMA_URL ||
+        process.env.POSTGRES_URL;
+
+    if (!connectionString) return undefined;
+
+    const pool = new pg.Pool({ connectionString });
+    const adapter = new PrismaPg(pool);
+    const client = new PrismaClient({ adapter });
+
+    return PrismaAdapter(client);
 };
 
 export const authOptions: NextAuthOptions = {
-    adapter: getPrismaAdapter(),
+    adapter: getPrismaAdapter() as any,
     session: {
         strategy: "jwt",
     },
@@ -72,14 +83,14 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
-                token.role = (user as any).role;
+                token.role = (user as { role?: string }).role || "USER";
             }
             return token;
         },
         async session({ session, token }) {
             if (token && session.user) {
                 session.user.id = token.id as string;
-                (session.user as any).role = token.role;
+                (session.user as { role?: string }).role = token.role as string;
             }
             return session;
         },

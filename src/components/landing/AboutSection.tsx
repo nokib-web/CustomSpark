@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function AboutSection() {
     return (
         <section id="about" className="py-24 bg-slate-50 dark:bg-slate-950 overflow-hidden">
@@ -5,14 +7,15 @@ export default function AboutSection() {
                 <div className="flex flex-col lg:flex-row items-center gap-16">
                     <div className="lg:w-1/2 relative">
                         <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl">
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
                                 alt="Our Team"
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                             />
                         </div>
                         {/* Geometric accents */}
-                        <div className="absolute top-10 right-10 w-full h-full border-2 border-primary-600 rounded-3xl -z-0 translate-x-4 translate-y-4 opacity-20" />
+                        <div className="absolute top-10 right-10 w-full h-full border-2 border-primary-600 rounded-3xl z-0 translate-x-4 translate-y-4 opacity-20" />
                     </div>
 
                     <div className="lg:w-1/2">

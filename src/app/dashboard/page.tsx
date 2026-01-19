@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Item } from "@/types";
 import { LucidePlus, LucidePackage, LucideEdit, LucideTrash2, LucideLoader2 } from "lucide-react";
 import Link from "next/link";
@@ -15,42 +15,29 @@ export default function DashboardPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
-    useEffect(() => {
-        if (status === "authenticated" && session?.user) {
-            fetchUserItems();
-        } else if (status === "unauthenticated") {
-            // Let middleware handle this, or redirect here
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [status, session]);
-
-    const fetchUserItems = async () => {
-        // Assuming we have an endpoint or we can filter strictly on client?
-        // Better to have an API that returns current user items.
-        // For now, let's use the main list filtered by user ID (or a hypothetical my-items endpoint)
-        // Since we didn't explicitly create /api/items/me, we'll fetch all and filter client side 
-        // OR filtering via server query if supported. 
-        // Ideally we should add GET /api/user/items or similar.
-        // Let's rely on standard items fetch with a 'my-items' filter hack or check if we updated the API to support sorting/filtering by userId.
-        // The previous API update allowed generic filtering. Let's see if we can filter by userId client side for now or query specific userId
-
-        // Actually, looking at GET /api/items, it doesn't explicitly filter by userId unless extended. 
-        // Let's create a dedicated fetch or just fetch all and filter for MVP
+    const fetchUserItems = useCallback(async () => {
+        if (!session?.user) return;
+        setIsLoading(true);
         try {
-            const res = await fetch("/api/items?limit=100"); // Getting a larger set to filter client side for now.
+            const res = await fetch(`/api/user/items`);
             const data = await res.json();
 
             if (data.items) {
-                // Filter by session user id
-                const myItems = data.items.filter((item: Item) => item.userId === session?.user?.id);
-                setUserItems(myItems);
+                setUserItems(data.items);
             }
-        } catch (_error) {
-            console.error("Failed to load user items", _error);
+        } catch (error) {
+            console.error("Failed to load user items", error);
+            showError("Failed to load your items.");
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [session]);
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            fetchUserItems();
+        }
+    }, [status, fetchUserItems]);
 
     const handleDelete = async (itemId: string) => {
         if (!confirm("Are you sure you want to delete this item?")) return;
@@ -68,9 +55,9 @@ export default function DashboardPage() {
                 const data = await res.json();
                 showError(data.error || "Failed to delete item");
             }
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (_error) {
-            showError("An error occurred");
+        } catch (error) {
+            console.error("Failed to delete item:", error);
+            showError("An error occurred while deleting the item.");
         } finally {
             setDeleteLoading(null);
         }
@@ -89,25 +76,25 @@ export default function DashboardPage() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20">
-            <div className="container mx-auto px-6">
+        <section className="py-12 px-6 lg:px-12 animate-in fade-in duration-700">
+            <div className="max-w-6xl">
                 <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
                     <div>
                         <div className="flex items-center gap-3 mb-2">
                             <h1 className="text-4xl font-black text-slate-900 dark:text-white">My Dashboard</h1>
                             <span className={cn(
                                 "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
-                                (session?.user as any)?.role === "ADMIN"
+                                session?.user?.role === "ADMIN"
                                     ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-800"
                                     : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
                             )}>
-                                {(session?.user as any)?.role || "User"}
+                                {session?.user?.role || "User"}
                             </span>
                         </div>
                         <p className="text-slate-500 font-medium">Manage your listings and account.</p>
                     </div>
                     <div className="flex items-center gap-4">
-                        {(session?.user as any)?.role === "ADMIN" && (
+                        {session?.user?.role === "ADMIN" && (
                             <Link
                                 href="/admin"
                                 className="px-8 py-4 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold rounded-2xl transition-all flex items-center gap-2 active:scale-95"
@@ -127,7 +114,7 @@ export default function DashboardPage() {
 
                 {/* Stats Section (Placeholder) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm">
+                    <div className="dashboard-card p-8">
                         <div className="flex items-center gap-4 mb-4">
                             <div className="h-12 w-12 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
                                 <LucidePackage size={24} />
@@ -139,7 +126,7 @@ export default function DashboardPage() {
                     {/* Add more stats as needed */}
                 </div>
 
-                <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 md:p-12 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                <div className="dashboard-card p-8 md:p-12 mb-12">
                     <h2 className="text-2xl font-black mb-8">My Items</h2>
 
                     {userItems.length > 0 ? (
@@ -193,6 +180,6 @@ export default function DashboardPage() {
                     )}
                 </div>
             </div>
-        </main>
+        </section>
     );
 }

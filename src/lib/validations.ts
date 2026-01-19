@@ -10,25 +10,29 @@ export const LoginSchema = z.object({
 });
 
 /**
- * Signup Form Validation
+ * Core Signup Validation (for backend & base form)
  */
-export const SignupSchema = z
-    .object({
-        name: z.string().min(2, "Name must be at least 2 characters"),
-        email: z.string().email("Please enter a valid email address"),
-        password: z
-            .string()
-            .min(8, "Password must be at least 8 characters")
-            .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-            .regex(/[0-9]/, "Must contain at least one number")
-            .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
-        confirmPassword: z.string().min(1, "Please confirm your password"),
-        terms: z.boolean().refine((val) => val === true, "You must accept the terms"),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "Passwords don't match",
-        path: ["confirmPassword"],
-    });
+export const RegisterSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Please enter a valid email address"),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/[A-Z]/, "Must contain at least one uppercase letter")
+        .regex(/[0-9]/, "Must contain at least one number")
+        .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
+});
+
+/**
+ * UI Signup Validation (includes confirm password and terms)
+ */
+export const SignupSchema = RegisterSchema.extend({
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+    terms: z.boolean().refine((val) => val === true, "You must accept the terms"),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+});
 
 /**
  * Add Item Form Validation
@@ -47,7 +51,7 @@ export const ItemSchema = z.object({
     stock: z.number().int().nonnegative(),
     sku: z.string().optional(),
     tags: z.array(z.string()),
-    featured: z.boolean().default(false),
+    featured: z.boolean(),
 });
 
 export const AddItemSchema = ItemSchema;

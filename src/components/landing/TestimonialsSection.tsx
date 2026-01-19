@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LucideStar, LucideQuote } from "lucide-react";
 
 const testimonials = [
@@ -36,7 +37,7 @@ export default function TestimonialsSection() {
                 <div className="grid md:grid-cols-3 gap-8">
                     {testimonials.map((t, i) => (
                         <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none relative">
-                            <LucideQuote className="absolute top-6 right-8 text-primary-100 dark:text-slate-800 h-12 w-12 -z-0" />
+                            <LucideQuote className="absolute top-6 right-8 text-primary-100 dark:text-slate-800 h-12 w-12 z-0" />
                             <div className="relative z-10">
                                 <div className="flex gap-1 mb-4">
                                     {[...Array(t.rating)].map((_, idx) => (
@@ -44,11 +45,11 @@ export default function TestimonialsSection() {
                                     ))}
                                 </div>
                                 <p className="text-slate-600 dark:text-slate-400 italic mb-8 leading-relaxed">
-                                    "{t.content}"
+                                    &quot;{t.content}&quot;
                                 </p>
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-full overflow-hidden border-2 border-primary-500">
-                                        <img src={t.avatar} alt={t.name} />
+                                        <Image src={t.avatar} alt={t.name} width={48} height={48} className="object-cover" />
                                     </div>
                                     <div>
                                         <h5 className="font-bold text-slate-900 dark:text-white">{t.name}</h5>

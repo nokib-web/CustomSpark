@@ -1,7 +1,7 @@
-
 import { GET, POST } from "@/app/api/items/route";
 import { NextRequest } from "next/server";
-import { resetDb, seedTestDb, disconnectDb, prisma } from "../db-helpers";
+import { resetDb, seedTestDb, disconnectDb } from "../db-helpers";
+import { User } from "@prisma/client";
 import { getServerSession } from "@/lib/auth";
 
 jest.mock("@/lib/auth", () => ({
@@ -9,8 +9,7 @@ jest.mock("@/lib/auth", () => ({
 }));
 
 describe("Items API Integration Tests", () => {
-    let testUser: any;
-    let testItem: any;
+    let testUser: User;
 
     beforeAll(async () => {
         // Ensure env var is set or warn
@@ -21,9 +20,7 @@ describe("Items API Integration Tests", () => {
 
     beforeEach(async () => {
         await resetDb();
-        const seed = await seedTestDb();
-        testUser = seed.user;
-        testItem = seed.item;
+        testUser = (await seedTestDb()).user;
     });
 
     afterAll(async () => {

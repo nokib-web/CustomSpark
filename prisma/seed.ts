@@ -6,20 +6,36 @@ async function main() {
     console.log('🌱 Starting database seeding...');
 
     // Clear existing data
+    process.stdout.write('   🗑️ Clearing Audit Logs...');
+    await prisma.auditLog.deleteMany();
+    process.stdout.write(' Done\n');
+
+    process.stdout.write('   🗑️ Clearing Items...');
     await prisma.item.deleteMany();
+    process.stdout.write(' Done\n');
+
+    process.stdout.write('   🗑️ Clearing Sessions...');
     await prisma.session.deleteMany();
+    process.stdout.write(' Done\n');
+
+    process.stdout.write('   🗑️ Clearing Accounts...');
     await prisma.account.deleteMany();
+    process.stdout.write(' Done\n');
+
+    process.stdout.write('   🗑️ Clearing Users...');
     await prisma.user.deleteMany();
+    process.stdout.write(' Done\n');
+
     console.log('✅ Cleared existing data.');
 
     // Create Users
-    const adminPassword = await bcrypt.hash('Admin123!', 12);
-    const userPassword = await bcrypt.hash('User123!', 12);
+    const adminPassword = await bcrypt.hash('!QAZ1qaz', 12);
+    const userPassword = await bcrypt.hash('!QAZ1qaz', 12);
 
     const admin = await prisma.user.create({
         data: {
-            name: 'Admin User',
-            email: 'admin@example.com',
+            name: 'Admin',
+            email: 'admin@gmail.com',
             password: adminPassword,
             role: 'ADMIN',
         },
@@ -27,8 +43,8 @@ async function main() {
 
     const regularUser = await prisma.user.create({
         data: {
-            name: 'John Doe',
-            email: 'user@example.com',
+            name: 'Nokib',
+            email: 'nokib@gmail.com',
             password: userPassword,
         },
     });
@@ -95,7 +111,7 @@ async function main() {
             description: 'Eco-friendly non-slip yoga mat with carrying strap.',
             price: 24.99,
             category: 'Sports',
-            imageUrl: 'https://images.unsplash.com/photo-1592432676556-2sSfb5ef300e?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80',
             stock: 60,
             sku: 'SPOR-YOGA-001',
             tags: ['fitness', 'eco-friendly', 'yoga'],
@@ -135,7 +151,7 @@ async function main() {
             description: 'Long-lasting lavender scented soy candle.',
             price: 18.50,
             category: 'Home',
-            imageUrl: 'https://images.unsplash.com/photo-1603006371072-5b12854972fB?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1605651202774-7d573fd3f12d?w=800&q=80',
             stock: 80,
             sku: 'HOME-CAND-002',
             tags: ['aroma', 'soy', 'candle'],
@@ -148,7 +164,7 @@ async function main() {
             description: 'Space-saving adjustable weights for home workouts.',
             price: 349.99,
             category: 'Sports',
-            imageUrl: 'https://images.unsplash.com/photo-1583454110551-21f2fa2021E4?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1638536532686-d610adfc8e5c?w=800&q=80',
             stock: 10,
             sku: 'SPOR-DUMB-002',
             tags: ['weights', 'fitness', 'home-gym'],
@@ -213,7 +229,7 @@ async function main() {
             description: 'Fast wireless charging for smartphones.',
             price: 29.99,
             category: 'Electronics',
-            imageUrl: 'https://images.unsplash.com/photo-1586816879360-004f5bc99c88?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1616410408411-94dfd74656fa?w=800&q=80',
             stock: 75,
             sku: 'ELEC-CHRG-005',
             tags: ['tech', 'wireless', 'charger'],
@@ -226,7 +242,7 @@ async function main() {
             description: 'Classic blue denim jacket with vintage feel.',
             price: 65.00,
             category: 'Fashion',
-            imageUrl: 'https://images.unsplash.com/photo-1576905300096-74fc2da1f7ae?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1601333144130-8cbb312386b6?w=800&q=80',
             stock: 40,
             sku: 'FASH-JACK-004',
             tags: ['denim', 'vintage', 'casual'],
@@ -239,7 +255,7 @@ async function main() {
             description: 'Quick-boil electric kettle for your morning tea.',
             price: 39.99,
             category: 'Home',
-            imageUrl: 'https://images.unsplash.com/photo-1594212699903-ec8a3ecc50f1?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1584982251264-74932d7ef237?w=800&q=80',
             stock: 55,
             sku: 'HOME-KETT-004',
             tags: ['kitchen', 'electric', 'utility'],
@@ -252,7 +268,7 @@ async function main() {
             description: 'High-quality rackets and shuttlecocks for two players.',
             price: 49.99,
             category: 'Sports',
-            imageUrl: 'https://images.unsplash.com/photo-1613918431201-6b45f94080bc?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1521537634581-0dced2fee2ef?w=800&q=80',
             stock: 25,
             sku: 'SPOR-BADM-004',
             tags: ['game', 'badminton', 'racket'],
@@ -278,7 +294,7 @@ async function main() {
             description: 'Soft silk scarf with artistic patterns.',
             price: 35.00,
             category: 'Fashion',
-            imageUrl: 'https://images.unsplash.com/photo-1601369524855-8dd2c222625d?w=800&q=80',
+            imageUrl: 'https://images.unsplash.com/photo-1520903074185-8eca362b3dce?w=800&q=80',
             stock: 30,
             sku: 'FASH-SCA-005',
             tags: ['accessory', 'silk', 'fashion'],

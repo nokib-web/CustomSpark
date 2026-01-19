@@ -1,18 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function PerformanceBars() {
-    const [bars, setBars] = useState<number[]>([45, 65, 55]);
-
-    useEffect(() => {
-        // Initialize bars with stable values
-        setBars([
-            Math.random() * 60 + 30,
-            Math.random() * 60 + 30,
-            Math.random() * 60 + 30,
-        ]);
-    }, []);
+    const [bars] = useState<number[]>(() => [
+        Math.random() * 60 + 30,
+        Math.random() * 60 + 30,
+        Math.random() * 60 + 30,
+    ]);
 
     return (
         <div className="space-y-6">

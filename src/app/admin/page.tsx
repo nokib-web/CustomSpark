@@ -20,8 +20,8 @@ export default async function AdminDashboardPage() {
     ];
 
     return (
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-24 pb-20">
-            <div className="container mx-auto px-6">
+        <section className="py-12 px-6 lg:px-12 animate-in fade-in duration-700">
+            <div className="max-w-6xl">
                 <div className="flex items-center justify-between mb-12">
                     <div>
                         <h1 className="text-4xl font-black text-slate-900 dark:text-white mb-2">Admin Administrator</h1>
@@ -37,7 +37,7 @@ export default async function AdminDashboardPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                     {stats.map((stat, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm group hover:shadow-xl transition-all duration-300">
+                        <div key={i} className="dashboard-card p-8 group">
                             <div className="flex items-center gap-4 mb-6">
                                 <div className={`h-14 w-14 rounded-2xl ${stat.bg} flex items-center justify-center ${stat.color} group-hover:scale-110 transition-transform`}>
                                     <stat.icon size={28} />
@@ -50,7 +50,7 @@ export default async function AdminDashboardPage() {
                 </div>
 
                 <div className="grid lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    <div className="lg:col-span-2 dashboard-card p-10">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-black">System Performance</h2>
                             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -69,6 +69,6 @@ export default async function AdminDashboardPage() {
                     </div>
                 </div>
             </div>
-        </main>
+        </section>
     );
 }

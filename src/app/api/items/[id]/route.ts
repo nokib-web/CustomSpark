@@ -84,7 +84,7 @@ export async function PUT(
         }
 
         // Check ownership (or admin status if implemented)
-        const userId = (session.user as any).id;
+        const userId = session.user.id;
         const isAdmin = session.user.email === 'admin@example.com';
 
         if (existingItem.userId !== userId && !isAdmin) {
@@ -119,14 +119,15 @@ export async function PUT(
 
         // Audit Log
         const changes = Object.keys(validation.data).reduce((acc, key) => {
-            if (validation.data[key as keyof typeof validation.data] !== existingItem[key as keyof typeof existingItem]) {
+            const typedKey = key as keyof typeof validation.data;
+            if (validation.data[typedKey] !== existingItem[typedKey]) {
                 acc[key] = {
-                    from: existingItem[key as keyof typeof existingItem],
-                    to: validation.data[key as keyof typeof validation.data]
+                    from: existingItem[typedKey],
+                    to: validation.data[typedKey]
                 };
             }
             return acc;
-        }, {} as Record<string, any>);
+        }, {} as Record<string, unknown>);
 
         await createAuditLog(userId, "UPDATE_ITEM", "Item", id, changes);
 
@@ -173,7 +174,7 @@ export async function DELETE(
         }
 
         // Check ownership or admin status
-        const userId = (session.user as any).id;
+        const userId = session.user.id;
         const isAdmin = session.user.email === 'admin@example.com';
 
         if (existingItem.userId !== userId && !isAdmin) {

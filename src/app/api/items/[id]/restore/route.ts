@@ -48,7 +48,7 @@ export async function PATCH(
             );
         }
 
-        if (!(existingItem as any).deletedAt) {
+        if (!existingItem.deletedAt) {
             return NextResponse.json(
                 { message: "Item is not deleted" },
                 { status: 400 }

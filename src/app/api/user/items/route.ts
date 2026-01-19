@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
         const limit = Math.max(1, parseInt(searchParams.get("limit") || "10"));
 
-        const userId = (session.user as any).id;
+        const userId = session.user.id;
 
         const [items, total] = await Promise.all([
             prisma.item.findMany({

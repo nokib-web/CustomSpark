@@ -21,7 +21,7 @@ export async function GET() {
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: (session.user as any).id },
+            where: { id: session.user.id },
             select: {
                 id: true,
                 name: true,
@@ -78,7 +78,7 @@ export async function PUT(req: NextRequest) {
         }
 
         const updatedUser = await prisma.user.update({
-            where: { id: (session.user as any).id },
+            where: { id: session.user.id },
             data: validation.data,
             select: {
                 id: true,
