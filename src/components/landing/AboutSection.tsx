@@ -6,10 +6,10 @@ export default function AboutSection() {
             <div className="container mx-auto px-6">
                 <div className="flex flex-col lg:flex-row items-center gap-16">
                     <div className="lg:w-1/2 relative">
-                        <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl">
+                        <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl aspect-[4/3] lg:aspect-[4/5]">
                             <Image
-                                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop"
-                                alt="Our Team"
+                                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80"
+                                alt="Our Team Meeting"
                                 fill
                                 className="object-cover"
                             />

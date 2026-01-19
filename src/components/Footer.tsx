@@ -1,11 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
-    LucideTwitter,
-    LucideInstagram,
     LucideFacebook,
     LucideLinkedin,
-    LucideSend
+    LucideSend,
+    LucideGithub,
+    LucideGlobe
 } from "lucide-react";
 
 const quickLinks = [
@@ -45,13 +45,20 @@ export default function Footer() {
                             Empowering your digital experience with premium products and seamless services. Join the spark and discover greatness.
                         </p>
                         <div className="flex gap-4">
-                            {[LucideTwitter, LucideInstagram, LucideFacebook, LucideLinkedin].map((Icon, i) => (
+                            {[
+                                { Icon: LucideLinkedin, href: "https://www.linkedin.com/in/nazmulhasan-nokib/" },
+                                { Icon: LucideGithub, href: "https://github.com/nokib-web" },
+                                { Icon: LucideFacebook, href: "https://www.facebook.com/NokibHasan.Nazmul" },
+                                { Icon: LucideGlobe, href: "https://nokib.vercel.app" }
+                            ].map((social, i) => (
                                 <a
                                     key={i}
-                                    href="#"
+                                    href={social.href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="h-10 w-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary-600 hover:text-white transition-all shadow-sm"
                                 >
-                                    <Icon size={18} />
+                                    <social.Icon size={18} />
                                 </a>
                             ))}
                         </div>
@@ -118,7 +125,7 @@ export default function Footer() {
                 {/* Bottom Bar */}
                 <div className="mt-16 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
                     <p className="text-sm text-slate-500">
-                        &copy; {new Date().getFullYear()} Custom Spark. Made with spark in Innovation City.
+                        &copy; {new Date().getFullYear()} Custom Spark. Built by <a href="https://nokib.vercel.app" target="_blank" rel="noopener noreferrer" className="text-primary-500 hover:underline">Nazmul Hasan Nokib</a>.
                     </p>
                     <div className="flex gap-8 text-sm">
                         <Link href="/privacy" className="text-slate-500 hover:text-white transition-colors">Privacy Policy</Link>
