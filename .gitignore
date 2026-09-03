@@ -31,8 +31,6 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
-.env
-.env.local
 .env*.local
 !.env.example
 # vercel
@@ -46,3 +44,4 @@ next-env.d.ts
 temp_auto_push.bat
 temp_interactive_push.bat
 branch_structure.json
+config.bat
